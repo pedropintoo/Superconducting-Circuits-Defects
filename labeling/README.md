@@ -13,3 +13,7 @@ pip install -r requirements.txt
 ```bash
 FRONTEND_SENTRY_DSN="" SENTRY_DSN="" COLLECT_ANALYTICS=False label-studio
 ```
+
+## Help tutorial
+
+https://www.youtube.com/watch?v=R1ozTMrujOE
