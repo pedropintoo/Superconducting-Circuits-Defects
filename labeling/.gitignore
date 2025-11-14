@@ -1,1 +1,7 @@
 labelstudio-env/
+label-studio/
+
+env/
+venv/
+__pycache__/
+
