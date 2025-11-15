@@ -1,5 +1,4 @@
 Burn
-Defect-Big
-Defect-Small
+Dirt
+Dirt-Wire
 Open
-Partial-Open

@@ -1,1 +1,2 @@
 label-studio==1.21.0
+opencv-python==4.12.0.88

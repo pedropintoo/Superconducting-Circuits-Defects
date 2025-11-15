@@ -3,6 +3,10 @@ datasets/*
 !datasets/.gitkeep
 !datasets/README.md
 !datasets/chip_defects
+!datasets/chip_defects.yaml
+
+
+runs
 
 # any file that ends in .jpg
 *.jpg

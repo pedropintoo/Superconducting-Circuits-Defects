@@ -6,19 +6,15 @@
     },
     {
       "id": 1,
-      "name": "Defect-Big"
+      "name": "Dirt"
     },
     {
       "id": 2,
-      "name": "Defect-Small"
+      "name": "Dirt-Wire"
     },
     {
       "id": 3,
       "name": "Open"
-    },
-    {
-      "id": 4,
-      "name": "Partial-Open"
     }
   ],
   "info": {
