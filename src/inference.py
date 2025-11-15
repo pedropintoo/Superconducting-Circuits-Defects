@@ -1,24 +1,32 @@
 import os
 from ultralytics import YOLO
 
-run_id = "run1"
-best = f"chip_defect_detection/{run_id}/weights/best.pt"
-image_path = "../data/RQ3_TWPA_V2_W2/251023_Junctions/dark"
-test_range = range(280, 290)
-images = [f"{image_path}/{i:06d}.jpg" for i in test_range]
+# ----------------------------------------------------------------
+# Define which run to use for inference
+
+RUN_ID = sorted(os.listdir("chip_defect_detection"))[-1]
+EXAMPLE = "dark_big_burn"
+
+# ----------------------------------------------------------------
+
+best = f"chip_defect_detection/{RUN_ID}/weights/best.pt"
+examples = {
+    "dark_big_burn": [f"../datasets/RQ3_TWPA_V2_W2/251023_Junctions/dark/{i:06d}.jpg" for i in range(280, 290)]
+}
 
 model = YOLO(best)
 
 results = model(
-    images,
+    examples[EXAMPLE],
     conf=0.05,
-    save=True
+    save=True, 
+    project="inference_results",
+    name=f"{EXAMPLE}/{RUN_ID}",
+    
 )
 
 print("Prediction completed and saved.")
 
 for r in results:
     print(f"Processing result for image: {r.path}")
-    print(f"Boxes: {r.boxes}")  # Boxes object for bounding box outputs
-    print(f"Masks: {r.masks}")  # Masks object for segmentation masks outputs
-    print(f"Keypoints: {r.keypoints}")  # Keypoints object for pose
+    
