@@ -6,27 +6,27 @@ model = YOLO("yolo11n.pt")
 
 # Train the model on your custom dataset
 results = model.train(
-    data="chip_defects.yaml",
-    epochs=125, 
-    imgsz=640,
+    data="dataset.yaml",
+    epochs=500, 
+    imgsz=960,
     project="chip_defect_detection",
     name="run",
     
 # Data augmentation parameters (randomly between +/- values)
-    hsv_h=0.5,          # Hue adjustment
-    hsv_s=0.7,          # Saturation adjustment
-    hsv_v=0.7,          # Brightness adjustment
-    degrees=180,        # Rotation
-    translate=0.4,      # Translation 
-    scale=0.5,          # Scaling
-    shear = 5,          # Shearing
-    perspective=0.0,    # Perspective distortion
-    flipud=0.5,         # Vertical flip
-    fliplr=0.5,         # Horizontal flip
-    bgr=0.5,            # Random BGR distortion
-    mosaic=1.0,         # Mosaic augmentation
-    mixup=0,            # Mixup augmentation
-    cutmix=0.5,         # CutMix augmentation
+    hsv_h=0.1,          # Hue adjustment (default 0.015)
+    hsv_s=0.7,          # Saturation adjustment (default 0.7)
+    hsv_v=0.4,          # Brightness adjustment (default 0.4)
+    degrees=0  ,        # Rotation (default 0.0)
+    translate=0.4,      # Translation (default 0.1)
+    scale=0.5,          # Scaling (default 0.5)
+    shear = 0.0,        # Shearing (default 0.0)
+    perspective=0.0,    # Perspective distortion (default 0.0)
+    flipud=0.5,         # Vertical flip (default 0.0)
+    fliplr=0.5,         # Horizontal flip (default 0.5)
+    bgr=0.0,            # Random BGR distortion (default 0.0)
+    mosaic=1.0,         # Mosaic augmentation (default 1.0)
+    mixup=0,            # Mixup augmentation (default 0.0)
+    cutmix=0.5,         # CutMix augmentation (default 0.0)
 )
 
 best_model_path = os.path.join(results.save_dir, "weights", "best.pt")
