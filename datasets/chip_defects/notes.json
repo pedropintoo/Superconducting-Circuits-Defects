@@ -1,0 +1,29 @@
+{
+  "categories": [
+    {
+      "id": 0,
+      "name": "Burn"
+    },
+    {
+      "id": 1,
+      "name": "Defect-Big"
+    },
+    {
+      "id": 2,
+      "name": "Defect-Small"
+    },
+    {
+      "id": 3,
+      "name": "Open"
+    },
+    {
+      "id": 4,
+      "name": "Partial-Open"
+    }
+  ],
+  "info": {
+    "year": 2025,
+    "version": "1.0",
+    "contributor": "Label Studio"
+  }
+}

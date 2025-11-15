@@ -1,9 +1,12 @@
 
-data/*
-!data/.gitkeep
-!data/README.md
+datasets/*
+!datasets/.gitkeep
+!datasets/README.md
+!datasets/chip_defects
 
-
+# any file that ends in .jpg
+*.jpg
+*.png
 
 # -----------------------------------------------------
 # (template: Python.gitignore)

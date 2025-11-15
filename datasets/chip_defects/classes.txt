@@ -1,0 +1,5 @@
+Burn
+Defect-Big
+Defect-Small
+Open
+Partial-Open

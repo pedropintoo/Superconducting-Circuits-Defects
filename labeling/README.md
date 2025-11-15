@@ -22,7 +22,7 @@ export LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true
 export LOCAL_FILES_SERVING_ENABLED=true
 export LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=$HOME
 
-label-studio
+label-studio start 
 ```
 
 ## Importing data
@@ -31,6 +31,16 @@ To easily work with a big number of files, it is recommended to use the "Local S
 [Documentation](https://labelstud.io/guide/storage#Local-storage)
 
 Intuition: you just need to create a project, after that, you go to the "Settings" tab, then to "Storage" and create a new "Local Storage" pointing to the folder where your data is stored.
+
+## Working together in the same project
+
+Then, other users can access the project by going to `http://<ip_address>:8080` in their web browser.  
+
+## Saving and exporting annotations
+
+Important: to recreate the Label Studio don't forget to export in JSON format!!
+
+To train a YOLO model, you need to export as "YOLO format", and pass it through the `process-labeling.py` script.
 
 ## Help tutorial
 
