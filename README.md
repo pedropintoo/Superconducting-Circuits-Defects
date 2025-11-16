@@ -2,4 +2,4 @@
 
 - [Labeling Instructions](labeling/README.md)
 - [Datasets Information](datasets/README.md)
-- [Source Code](src/README.md)
+- [Source Code](src)
