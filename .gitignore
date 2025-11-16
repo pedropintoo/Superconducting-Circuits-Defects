@@ -4,7 +4,7 @@ datasets/*
 !datasets/README.md
 !datasets/chip_defects
 !datasets/chip_defects.yaml
-
+*.cache
 
 runs
 
