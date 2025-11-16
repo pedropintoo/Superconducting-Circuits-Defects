@@ -11,16 +11,33 @@ class YoloFormat:
         self.labels_path = os.path.join(RELATIVE_PATH, yolo_path, "labels")
         self.images_path_yolo = os.path.join(RELATIVE_PATH, yolo_path, "images")
         
-    def fill_images(self):
-        if os.listdir(self.images_path_yolo):
-            print("Yolo images folder is not empty, aborting...")
-            return
-        
-        for label_file in os.listdir(self.labels_path):
-            image_file = os.path.join(RELATIVE_PATH, self.images_path, label_file.replace(".txt", ".jpg"))
-            img = cv2.imread(image_file)
-            output_path = os.path.join(self.images_path_yolo, label_file.replace(".txt", ".jpg"))
-            cv2.imwrite(output_path, img)
+    def fill_images(self, already_splitted: bool = False):
+        if not already_splitted:
+            if os.listdir(self.images_path_yolo):
+                print("Yolo images folder is not empty, aborting...")
+                return
+            
+            for label_file in os.listdir(self.labels_path):
+                image_file = os.path.join(RELATIVE_PATH, self.images_path, label_file.replace(".txt", ".jpg"))
+                img = cv2.imread(image_file)
+                output_path = os.path.join(self.images_path_yolo, label_file.replace(".txt", ".jpg"))
+                cv2.imwrite(output_path, img)
+        # Just need to create images for /train and /val folders
+        else:
+            if not os.path.exists(self.images_path_yolo):
+                os.makedirs(self.images_path_yolo, exist_ok=True)
+            
+            for split in ["train", "val"]:
+                split_images_path = os.path.join(self.images_path_yolo, split)
+                if not os.path.exists(split_images_path):
+                    os.makedirs(split_images_path, exist_ok=True)
+                
+                split_labels_path = os.path.join(self.labels_path, split)
+                for label_file in os.listdir(split_labels_path):
+                    image_file = os.path.join(RELATIVE_PATH, self.images_path, label_file.replace(".txt", ".jpg"))
+                    img = cv2.imread(image_file)
+                    output_path = os.path.join(split_images_path, label_file.replace(".txt", ".jpg"))
+                    cv2.imwrite(output_path, img)
     
     def split_train_val_test(self, validation_rate: float, seed: int):
         if os.path.exists(os.path.join(self.images_path_yolo, "train")):
@@ -68,6 +85,11 @@ class YoloFormat:
 
 
 if __name__ == "__main__":
-    yolo_format = YoloFormat("datasets/chip_defects_20val", "datasets/RQ3_TWPA_V2_W2/251023_Junctions/dark")
-    yolo_format.fill_images()
-    yolo_format.split_train_val_test(validation_rate=0.2, seed=4)
+    # To download the images from a already splitted YOLO format:
+    # e.g: After clonning the repository you need to run this!
+    yolo_format = YoloFormat("datasets/chip_defects", "datasets/RQ3_TWPA_V2_W2/251023_Junctions/dark")
+    yolo_format.fill_images(already_splitted=True)
+
+    # To generate from a simple YOLO format to a simpled one: (e.g: After downloading from Label Studio in YOLO format)
+    # yolo_format.fill_images(already_splitted=False)
+    # yolo_format.split_train_val_test(validation_rate=0.2, seed=4)

@@ -8,6 +8,7 @@ all_models = sorted(
     [m.split("run")[-1] or "0" for m in os.listdir("chip_defect_detection")],
     key=int
 )
+all_models = [m if m != "0" else "" for m in all_models]
 
 RUN_ID = "run"+all_models[-1]  # Use the latest run
 EXAMPLE = "dark_big_burn"
