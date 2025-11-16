@@ -68,6 +68,6 @@ class YoloFormat:
 
 
 if __name__ == "__main__":
-    yolo_format = YoloFormat("datasets/chip_defects", "datasets/RQ3_TWPA_V2_W2/251023_Junctions/dark")
+    yolo_format = YoloFormat("datasets/chip_defects_20val", "datasets/RQ3_TWPA_V2_W2/251023_Junctions/dark")
     yolo_format.fill_images()
-    yolo_format.split_train_val_test(validation_rate=0.1, seed=4)
+    yolo_format.split_train_val_test(validation_rate=0.2, seed=4)
