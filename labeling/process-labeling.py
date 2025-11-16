@@ -24,6 +24,9 @@ class YoloFormat:
                 cv2.imwrite(output_path, img)
         # Just need to create images for /train and /val folders
         else:
+            if not os.path.exists(self.images_path_yolo):
+                os.makedirs(self.images_path_yolo, exist_ok=True)
+            
             for split in ["train", "val"]:
                 split_images_path = os.path.join(self.images_path_yolo, split)
                 if not os.path.exists(split_images_path):
