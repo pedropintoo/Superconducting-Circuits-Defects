@@ -2,8 +2,9 @@
 datasets/*
 !datasets/.gitkeep
 !datasets/README.md
-!datasets/chip_defects
-!datasets/chip_defects.yaml
+!datasets/train_val_dataset
+!datasets/train_val_dataset.yaml
+!datasets/convert_to_unique.sh
 *.cache
 
 runs
