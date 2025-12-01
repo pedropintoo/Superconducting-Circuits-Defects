@@ -38,7 +38,7 @@ Then, other users can access the project by going to `http://<ip_address>:8080` 
 
 ## Saving and exporting annotations
 
-Important: to recreate the Label Studio don't forget to export in JSON format!!
+Important: to recreate the Label Studio don't forget to export in JSON format!! (see `/backup` folder)
 
 To train a YOLO model, you need to export as "YOLO format", and pass it through the `process-labeling.py` script.
 
