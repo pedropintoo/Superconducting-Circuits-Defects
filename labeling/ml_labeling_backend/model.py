@@ -86,7 +86,7 @@ def resolve_local_path(url: str) -> str:
 # ---------------------------------------------------------------------------
 # Label Studio ML Backend
 # ---------------------------------------------------------------------------
-CONFIDENCE_FACTOR = 0.2
+CONFIDENCE_FACTOR = 0.1
 class NewModel(LabelStudioMLBase):
     """YOLO-based ML Backend for chip defect detection."""
 

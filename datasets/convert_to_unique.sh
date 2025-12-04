@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Base directory
-BASE_DIR="RQ1_Qubit_W1"
+BASE_DIR="Second_Batch"
 OUTPUT_DIR="full_dataset"
 
 # Check if the provided argument is a directory
