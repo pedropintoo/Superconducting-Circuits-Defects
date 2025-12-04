@@ -1,0 +1,13 @@
+opencv-python
+ultralytics
+streamlit
+Flask>2.3
+colorama~=0.4
+requests~=2.31
+semver~=3.0.2
+# label-studio-sdk==1.0.2
+label-studio-sdk @ git+https://github.com/HumanSignal/label-studio-sdk.git
+gunicorn==22.0.0
+label-studio-ml @ git+https://github.com/HumanSignal/label-studio-ml-backend.git
+pytest
+pytest-cov

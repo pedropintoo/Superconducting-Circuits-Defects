@@ -1,4 +1,2 @@
-Burn
-Dirt
-Dirt-Wire
-Open
+Critical
+Non-Critical

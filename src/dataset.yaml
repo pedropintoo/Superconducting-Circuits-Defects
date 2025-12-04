@@ -4,7 +4,5 @@ val: images/val # val images (relative to 'path')
 
 # Classes
 names:
-  0: Burn
-  1: Dirt
-  2: Dirt-Wire
-  3: Open
+  0: Non-Critical
+  1: Critical

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Base directory
-BASE_DIR="RQ3_TWPA_V2_W2"
+BASE_DIR="RQ1_Qubit_W1"
 OUTPUT_DIR="full_dataset"
 
 # Check if the provided argument is a directory

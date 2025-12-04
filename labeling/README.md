@@ -22,7 +22,7 @@ export LABEL_STUDIO_LOCAL_FILES_SERVING_ENABLED=true
 export LOCAL_FILES_SERVING_ENABLED=true
 export LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=$HOME
 
-label-studio start 
+label-studio --host 0.0.0.0 --port 8080 start
 ```
 
 ## Importing data
@@ -45,3 +45,14 @@ To train a YOLO model, you need to export as "YOLO format", and pass it through 
 ## Help tutorial
 
 https://www.youtube.com/watch?v=R1ozTMrujOE
+
+
+## Using ML backend with Label Studio
+
+Inside `ml_labeling_backend/` you can find instructions on how to set up and use the ML backend with Label Studio.
+You just need to run with:
+
+```bash
+docker-compose up --build
+```
+This will start the ML backend server that will connect to your Label Studio instance.

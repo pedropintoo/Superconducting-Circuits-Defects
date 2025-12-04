@@ -2,19 +2,11 @@
   "categories": [
     {
       "id": 0,
-      "name": "Burn"
+      "name": "Critical"
     },
     {
       "id": 1,
-      "name": "Dirt"
-    },
-    {
-      "id": 2,
-      "name": "Dirt-Wire"
-    },
-    {
-      "id": 3,
-      "name": "Open"
+      "name": "Non-Critical"
     }
   ],
   "info": {
