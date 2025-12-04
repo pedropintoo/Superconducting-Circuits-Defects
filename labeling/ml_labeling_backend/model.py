@@ -9,6 +9,10 @@ from label_studio_ml.model import LabelStudioMLBase
 from label_studio_ml.response import ModelResponse
 from ultralytics import YOLO
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Helper: locate the latest trained YOLO run
@@ -91,7 +95,7 @@ class NewModel(LabelStudioMLBase):
         model_path = get_latest_model_path()
         self.model = YOLO(str(model_path))
         self.set("model_version", model_path.parent.parent.name)  # e.g. "run5"
-        print(f"[ML Backend] Loaded model from {model_path}")
+        logger.warning(f"[ML Backend] Loaded model from {model_path}")
 
     def predict(self, tasks: List[Dict], context: Optional[Dict] = None, **kwargs) -> ModelResponse:
         """
@@ -174,5 +178,5 @@ class NewModel(LabelStudioMLBase):
         """
         Called on annotation events. Currently a no-op; online training is not implemented.
         """
-        print(f"[ML Backend] fit() called with event={event}. No action taken.")
+        logger.warning(f"[ML Backend] fit() called with event={event}. No action taken.")
 

@@ -33,7 +33,7 @@ results = model(
     conf=0.20,
     save=True, 
     project="inference_results",
-    name=f"{EXAMPLE}/{RUN_ID}",
+    name=f"{RUN_ID}/{EXAMPLE}",
     
 )
 

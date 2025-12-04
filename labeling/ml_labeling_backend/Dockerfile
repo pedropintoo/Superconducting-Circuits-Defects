@@ -6,6 +6,8 @@ ARG TEST_ENV
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y libgl1 && rm -rf /var/lib/apt/lists/*
+
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PORT=${PORT:-9090} \
