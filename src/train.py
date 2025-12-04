@@ -14,10 +14,10 @@ results = model.train(
     name="run",
     
 # Data augmentation parameters (randomly between +/- values)
-    hsv_h=0.25,          # Hue adjustment (default 0.015)
+    hsv_h=0.25,         # Hue adjustment (default 0.015)
     hsv_s=0.7,          # Saturation adjustment (default 0.7)
     hsv_v=0.6,          # Brightness adjustment (default 0.4)
-    degrees=0  ,        # Rotation (default 0.0)
+    degrees=0,          # Rotation (default 0.0)
     translate=0.4,      # Translation (default 0.1)
     scale=0.5,          # Scaling (default 0.5)
     shear = 0.0,        # Shearing (default 0.0)

@@ -5,6 +5,7 @@ datasets/*
 !datasets/train_val_dataset
 !datasets/train_val_dataset.yaml
 !datasets/convert_to_unique.sh
+!datasets/labels_raw
 *.cache
 
 runs
