@@ -1,4 +1,3 @@
 inference_results
 chip_defect_detection
 *.pt
-!yolo11s.pt

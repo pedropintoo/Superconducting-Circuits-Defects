@@ -2,3 +2,4 @@ label-studio
 opencv-python
 ultralytics
 streamlit
+tensorboard
