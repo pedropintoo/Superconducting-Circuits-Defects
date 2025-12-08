@@ -7,7 +7,7 @@ import cv2
 settings.update({"tensorboard": True})
 
 trainings = [
-    ("sliced_640", 16, 640, "yolo11n", 0.25, 0.7, 0.6, 0.0, True),
+    ("sliced_640", 30, 640, "yolo11n", 0.25, 0.7, 0.6, 0.0, True),
 ]
 
 for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in trainings:
