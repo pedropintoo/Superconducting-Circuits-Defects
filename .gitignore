@@ -6,6 +6,10 @@ datasets/*
 !datasets/train_val_dataset.yaml
 !datasets/convert_to_unique.sh
 !datasets/labels_raw
+!datasets/train_val_dataset_sliced
+!datasets/train_val_dataset_sliced_bg8
+!datasets/*.sh
+!datasets/*.py
 *.cache
 
 runs

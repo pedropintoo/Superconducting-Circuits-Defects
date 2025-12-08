@@ -19,13 +19,12 @@ def _parse_run_index(run_name: str) -> int:
         return 0
     return int(suffix) if suffix.isdigit() else -1
 
-
 @st.cache_data(show_spinner=False)
 def list_available_runs():
     runs = []
     if not RUNS_DIR.exists():
         return runs
-
+    run_index = 0
     for run_dir in RUNS_DIR.iterdir():
         if not run_dir.is_dir() or not run_dir.name.startswith("run"):
             continue
@@ -33,10 +32,8 @@ def list_available_runs():
         weight_path = run_dir / "weights" / "best.pt"
         if not weight_path.exists():
             continue
-
-        run_index = _parse_run_index(run_dir.name)
-        if run_index < 0:
-            continue
+        
+        run_index += 1
 
         runs.append({
             "label": run_dir.name,
