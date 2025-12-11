@@ -18,7 +18,7 @@ import numpy as np
 EXAMPLE = "LO_mark"
 # ----------------------------------------------------------------
 
-best = "chip_defect_detection/sliced_640/weights/best.pt"
+best = "chip_defect_detection/balanced_downsampled_bg8_2/weights/best.pt"
 print(f"Using model: {best} for inference.")
 
 examples = {
@@ -32,44 +32,44 @@ examples = {
     "LO_mark": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-{i:06d}.jpg" for i in range(342, 350)],
 }
 
-model = AutoDetectionModel.from_pretrained(
-    model_type="ultralytics",
-    model_path=best,
-    confidence_threshold=0.2,
-    # device="cpu", 
-)
+# model = AutoDetectionModel.from_pretrained(
+#     model_type="ultralytics",
+#     model_path=best,
+#     confidence_threshold=0.2,
+#     # device="cpu", 
+# )
 
-results = []
-for image_path in examples[EXAMPLE]:  # Process all examples
-    t0 = cv2.getTickCount()
-    result = get_sliced_prediction(
-        image_path,
-        model,
-        slice_height=256,
-        slice_width=256,
-        overlap_height_ratio=0.2,
-        overlap_width_ratio=0.2,
-    )
-    t1 = cv2.getTickCount()
-    time_taken = (t1 - t0) / cv2.getTickFrequency()
-    print(f"Time taken for sliced inference on {image_path}: {time_taken:.3f} seconds")
-    results.append((image_path, result))
+# results = []
+# for image_path in examples[EXAMPLE]:  # Process all examples
+#     t0 = cv2.getTickCount()
+#     result = get_sliced_prediction(
+#         image_path,
+#         model,
+#         slice_height=256,
+#         slice_width=256,
+#         overlap_height_ratio=0.2,
+#         overlap_width_ratio=0.2,
+#     )
+#     t1 = cv2.getTickCount()
+#     time_taken = (t1 - t0) / cv2.getTickFrequency()
+#     print(f"Time taken for sliced inference on {image_path}: {time_taken:.3f} seconds")
+#     results.append((image_path, result))
 
-    result.export_visuals(export_dir="demo_data/")
-    # move to a unique name
-    os.rename(
-        "demo_data/prediction_visual.png",
-        f"demo_data/prediction_visual_{os.path.basename(image_path)}.png",
-    )
-    print(f"Processed and saved results for image: {image_path}")
+#     result.export_visuals(export_dir="demo_data/")
+#     # move to a unique name
+#     os.rename(
+#         "demo_data/prediction_visual.png",
+#         f"demo_data/prediction_visual_{os.path.basename(image_path)}.png",
+#     )
+#     print(f"Processed and saved results for image: {image_path}")
 
-# CV2 to each predict
-for image_path, result in results:
-    result_image = cv2.imread(f"demo_data/prediction_visual_{os.path.basename(image_path)}.png")
-    result_image = cv2.resize(result_image, (1200, 800))  # Resize for better visibility
-    cv2.imshow(f"Prediction for {os.path.basename(image_path)}", result_image)
-    cv2.waitKey(0)  # Wait for a key press to close the window
-    cv2.destroyAllWindows()
+# # CV2 to each predict
+# for image_path, result in results:
+#     result_image = cv2.imread(f"demo_data/prediction_visual_{os.path.basename(image_path)}.png")
+#     result_image = cv2.resize(result_image, (1200, 800))  # Resize for better visibility
+#     cv2.imshow(f"Prediction for {os.path.basename(image_path)}", result_image)
+#     cv2.waitKey(0)  # Wait for a key press to close the window
+#     cv2.destroyAllWindows()
 
 
 # best = "chip_defect_detection/sliced_640/weights/best.pt"
@@ -90,14 +90,15 @@ for image_path, result in results:
 #     print(f"Processing result for image: {r.path}")
 
 # EVALUATION
-# best = "chip_defect_detection/sliced_640/weights/best.pt"
-# model = YOLO(best)
+best = "chip_defect_detection/balanced_downsampled_bg8_2/weights/best.pt"
+model = YOLO(best)
 
-# model.val(
-#     data="dataset_sliced_bg8.yaml",
-#     imgsz=640,
-#     batch=8,
-#     save=True,
-#     project="inference_results",
-#     name=f"{best.split('/')[1]}_validation",
-# )
+model.val(
+    data="dataset_sliced_balanced_downsampled_bg8.yaml",
+    imgsz=640,
+    batch=8,
+    save=True,
+    project="inference_results",
+    name=f"{best.split('/')[1]}_validation",
+    device="cpu"
+)

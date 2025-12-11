@@ -12,8 +12,8 @@ TARGET_BG_RATIO = 0.08  # 8% backgrounds
 RNG_SEED = 42  # deterministic sampling
 
 ROOT = Path(__file__).resolve().parent
-SRC_ROOT = ROOT / "train_val_dataset_sliced"
-DST_ROOT = ROOT / "train_val_dataset_sliced_bg8"
+SRC_ROOT = ROOT / "train_val_dataset_sliced_balanced_upsampled"
+DST_ROOT = ROOT / "train_val_dataset_sliced_balanced_upsampled_bg8"
 SPLITS = ["train", "val"]
 IMG_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff")
 
@@ -53,7 +53,7 @@ def balance_split(split: str):
 
     images = list_images(src_img_dir)
     if not images:
-        print(f"[WARN] Sem imagens para split '{split}' em {src_img_dir}")
+        print(f"[WARN] No images for split '{split}' in {src_img_dir}")
         return
 
     bg_imgs = []
@@ -97,12 +97,13 @@ def balance_split(split: str):
 
 
 if __name__ == "__main__":
-    print("Contando backgrounds e gerando dataset com ~8% de fundo...")
+    print("Counting backgrounds and generating dataset with ~8% background...")
     DST_ROOT.mkdir(parents=True, exist_ok=True)
     for split in SPLITS:
         balance_split(split)
-    # copiar classes.txt se existir
+    # copy classes.txt if exist
     classes_txt = SRC_ROOT / "classes.txt"
     if classes_txt.exists():
         shutil.copy2(classes_txt, DST_ROOT / "classes.txt")
-    print(f"\nPronto. Novo dataset em {DST_ROOT}")
+    print(f"\nDone. New dataset at {DST_ROOT}")
+

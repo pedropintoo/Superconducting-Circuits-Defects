@@ -7,7 +7,7 @@ import cv2
 settings.update({"tensorboard": True})
 
 trainings = [
-    ("sliced_640", 30, 640, "yolo11n", 0.25, 0.7, 0.6, 0.0, True),
+    ("balanced_downsampled_bg8_regularization_", 30, 640, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
 ]
 
 for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in trainings:
@@ -18,20 +18,21 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
     model = YOLO(f"{yolo_version}.pt")
 
     results = model.train(
-        data="dataset_sliced_bg8.yaml",
+        data="dataset_sliced_balanced_downsampled_bg8.yaml",
         epochs=100, 
         imgsz=imgsz,
         batch=batch,
         project="chip_defect_detection",
         name=name,
-    
+        weight_decay=0.001, # default is 0.0005
+        dropout=0.1, # default is 0
         augmentations=[
             # Blur variants
-            # A.OneOf([
-            #     A.MotionBlur(blur_limit=7, p=1.0),
-            #     A.MedianBlur(blur_limit=7, p=1.0),
-            #     A.GaussianBlur(blur_limit=7, p=1.0),
-            # ], p=0.3),
+            A.OneOf([
+                A.MotionBlur(blur_limit=7, p=1.0),
+                A.MedianBlur(blur_limit=7, p=1.0),
+                A.GaussianBlur(blur_limit=7, p=1.0),
+            ], p=0.3),
             
             # Noise variants
             A.OneOf([
