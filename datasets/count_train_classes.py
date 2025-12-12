@@ -3,7 +3,7 @@ from pathlib import Path
 
 # --- CONFIGURATION ---
 # We check the folder you intend to use as source
-DATASET_DIR = Path(__file__).resolve().parent / "new_128_train_val_dataset_sliced_balanced_downsampled_bg8"
+DATASET_DIR = Path(__file__).resolve().parent / "new_128_train_val_dataset_sliced_balanced_upsampled"
 
 def count_dataset():
     if not DATASET_DIR.exists():

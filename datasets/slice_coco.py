@@ -16,8 +16,8 @@ coco_dict, coco_path = slice_coco(
     image_dir=image_dir,
     output_dir=output_dir,
     output_coco_annotation_file_name="instances",
-    slice_height=128, # 256,
-    slice_width=128, # 256,
+    slice_height=128, # 128 # 256,
+    slice_width=128, # 128 # 256,
     overlap_height_ratio=0.2,
     overlap_width_ratio=0.2,
 )
@@ -38,8 +38,8 @@ coco_dict, coco_path = slice_coco(
     image_dir=image_dir,
     output_dir=output_dir,
     output_coco_annotation_file_name="instances",
-    slice_height=128, # 256,
-    slice_width=128, # 256,
+    slice_height=128, # 128 # 256,
+    slice_width=128, # 128 # 256,
     overlap_height_ratio=0.2,
     overlap_width_ratio=0.2,
 )

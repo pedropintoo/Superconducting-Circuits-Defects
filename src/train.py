@@ -7,7 +7,7 @@ import cv2
 settings.update({"tensorboard": True})
 
 trainings = [
-    ("new_dataset_sliced_128_balanced_downsampled_bg8_augmentation", -1, 640, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
+    ("new_dataset_sliced_128_balanced_upsampled_bg20_augmentation_without_mosaic_imgsz_768", -1, 768, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
 ]
 
 for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in trainings:
@@ -18,8 +18,8 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
     model = YOLO(f"{yolo_version}.pt")
 
     results = model.train(
-        data="new_128_dataset_sliced_balanced_downsampled_bg8.yaml",
-        epochs=400, 
+        data="new_128_dataset_sliced_balanced_upsampled_bg20.yaml",
+        epochs=200, 
         imgsz=imgsz,
         batch=batch,
         project="chip_defect_detection",
@@ -48,14 +48,14 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
         hsv_s=hsv_s,          # Saturation adjustment (default 0.7)
         hsv_v=hsv_v,          # Brightness adjustment (default 0.4)
         degrees=10,          # Rotation (default 0.0)
-        translate=0.4,      # Translation (default 0.1)
+        translate=0.1,      # Translation (default 0.1)
         scale=scale,          # Scaling (default 0.5)                 # use 0 when tiling is off!
         shear = 0.0,        # Shearing (default 0.0)
         perspective=0.0,    # Perspective distortion (default 0.0)
         flipud=0.0,         # Vertical flip (default 0.0)
         fliplr=0.5,         # Horizontal flip (default 0.5)
         bgr=0.0,            # Random BGR distortion (default 0.0)
-        mosaic=1.0,         # Mosaic augmentation (default 1.0)
+        mosaic=0.0,         # Mosaic augmentation (default 1.0)
         mixup=0,            # Mixup augmentation (default 0.0)
         cutmix=0.0,         # CutMix augmentation (default 0.0)
         

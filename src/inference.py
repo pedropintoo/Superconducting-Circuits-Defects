@@ -18,7 +18,7 @@ import numpy as np
 EXAMPLE = "LO_mark"
 # ----------------------------------------------------------------
 
-best = "chip_defect_detection/new_dataset_sliced_balanced_downsampled_bg8_augmentation/weights/best.pt"
+best = "chip_defect_detection/new_dataset_sliced_128_balanced_upsampled_bg8_augmentation_without_mosaic/weights/best.pt"
 print(f"Using model: {best} for inference.")
 
 examples = {
@@ -30,23 +30,25 @@ examples = {
     "white_chips": [f"../datasets/RQ3_TWPA_V2_W2/251101_Chips/v2_7500_500/{i:06d}.jpg" for i in range(15, 30)],
     "spir_60": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251028_Spir_60_6-bright-{i:06d}.jpg" for i in range(220, 230)],
     "LO_mark": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-{i:06d}.jpg" for i in range(342, 350)],
+    "Val_examples": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-00015{i:01d}.jpg" for i in range(9)],
+    "random" : ["../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-000169.jpg"]
 }
 
 model = AutoDetectionModel.from_pretrained(
     model_type="ultralytics",
     model_path=best,
-    confidence_threshold=0.2,
+    confidence_threshold=0.5,
     device="cpu", 
 )
 
 results = []
-for image_path in examples[EXAMPLE][:1]:  # Process all examples
+for image_path in examples[EXAMPLE][1:2 ]:  # Process all examples
     t0 = cv2.getTickCount()
     result = get_sliced_prediction(
         image_path,
         model,
-        slice_height=256,
-        slice_width=256,
+        slice_height=128,
+        slice_width=128,
         overlap_height_ratio=0.2,
         overlap_width_ratio=0.2,
     )
@@ -94,11 +96,11 @@ for image_path, result in results:
 # model = YOLO(best)
 
 # model.val(
-#     data="dataset_sliced_balanced_downsampled_bg8.yaml",
-#     imgsz=640,
+#     data="new_128_dataset_sliced_balanced_upsampled_bg8.yaml",
+#     imgsz=500,
 #     batch=8,
 #     save=True,
 #     project="inference_results",
 #     name=f"{best.split('/')[1]}_validation",
-#     device="cpu"
+#     # device="cpu"
 # )

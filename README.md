@@ -14,8 +14,7 @@ coco_to_yolo.py
 
 
 
-
-balance_classes_downsampling.py
+balance_classes_upsampling.py
 balance_backgrounds.py
 
 python3 train.py
