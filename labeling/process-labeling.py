@@ -87,9 +87,9 @@ class YoloFormat:
 if __name__ == "__main__":
     # To download the images from a already splitted YOLO format:
     # e.g: After clonning the repository you need to run this!
-    yolo_format = YoloFormat("datasets/train_val_dataset", "datasets/full_dataset")
-    yolo_format.fill_images(already_splitted=True)
+    yolo_format = YoloFormat("datasets/new_train_val_dataset", "datasets/full_dataset")
+    # yolo_format.fill_images(already_splitted=True)
 
     # To generate from a simple YOLO format to a simpled one: (e.g: After downloading from Label Studio in YOLO format)
-    # yolo_format.fill_images(already_splitted=False)
-    # yolo_format.split_train_val_test(validation_rate=0.2, seed=4)
+    yolo_format.fill_images(already_splitted=False)
+    yolo_format.split_train_val_test(validation_rate=0.2, seed=4)

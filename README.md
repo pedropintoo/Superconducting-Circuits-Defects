@@ -4,6 +4,7 @@
 - [Datasets Information](datasets/README.md)
 - [Source Code](src)
 
+process-labeling.py
 
 yolo_to_coco.py
 slice_coco.py
@@ -14,6 +15,7 @@ coco_to_yolo.py
 
 
 
+balance_classes_downsampling.py
+balance_backgrounds.py
 
-
-balance_background.py
+python3 train.py

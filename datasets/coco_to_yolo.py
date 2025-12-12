@@ -8,10 +8,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 
 # Input COCO dataset (expects subfolders train/val with instances.json and images)
-COCO_ROOT_DIR = ROOT / "coco_sliced"
+COCO_ROOT_DIR = ROOT / "new_128_coco_sliced"
 
 # Output YOLO dataset
-YOLO_OUT_ROOT = ROOT / "train_val_dataset_sliced"
+YOLO_OUT_ROOT = ROOT / "new_128_train_val_dataset_sliced"
 YOLO_IMAGES_DIR = YOLO_OUT_ROOT / "images"
 YOLO_LABELS_DIR = YOLO_OUT_ROOT / "labels"
 

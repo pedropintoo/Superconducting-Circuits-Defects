@@ -7,7 +7,7 @@ import cv2
 settings.update({"tensorboard": True})
 
 trainings = [
-    ("balanced_downsampled_bg8_regularization_", 30, 640, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
+    ("new_dataset_sliced_128_balanced_downsampled_bg8_augmentation", -1, 640, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
 ]
 
 for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in trainings:
@@ -18,14 +18,13 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
     model = YOLO(f"{yolo_version}.pt")
 
     results = model.train(
-        data="dataset_sliced_balanced_downsampled_bg8.yaml",
-        epochs=100, 
+        data="new_128_dataset_sliced_balanced_downsampled_bg8.yaml",
+        epochs=400, 
         imgsz=imgsz,
         batch=batch,
         project="chip_defect_detection",
         name=name,
-        weight_decay=0.001, # default is 0.0005
-        dropout=0.1, # default is 0
+
         augmentations=[
             # Blur variants
             A.OneOf([
@@ -48,8 +47,8 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
         hsv_h=hsv_h,         # Hue adjustment (default 0.015)
         hsv_s=hsv_s,          # Saturation adjustment (default 0.7)
         hsv_v=hsv_v,          # Brightness adjustment (default 0.4)
-        degrees=0,          # Rotation (default 0.0)
-        translate=0.1,      # Translation (default 0.1)
+        degrees=10,          # Rotation (default 0.0)
+        translate=0.4,      # Translation (default 0.1)
         scale=scale,          # Scaling (default 0.5)                 # use 0 when tiling is off!
         shear = 0.0,        # Shearing (default 0.0)
         perspective=0.0,    # Perspective distortion (default 0.0)

@@ -9,14 +9,14 @@ from PIL import Image
 # Base paths anchored to this file so it works no matter where you run it
 ROOT = Path(__file__).resolve().parent
 
-DATASET_ROOT_DIR = ROOT / "train_val_dataset"
+DATASET_ROOT_DIR = ROOT / "new_train_val_dataset"
 
 YOLO_IMAGES_DIR = DATASET_ROOT_DIR / "images"
 YOLO_LABELS_DIR = DATASET_ROOT_DIR / "labels"
 
-YOLO_DATA_YAML = ROOT.parent / "src" / "dataset.yaml" 
+YOLO_DATA_YAML = ROOT.parent / "src" / "new_dataset_sliced_balanced_downsampled_bg8.yaml" 
 
-COCO_OUTPUT_DIR = ROOT / "coco_dataset"  
+COCO_OUTPUT_DIR = ROOT / "new_coco_dataset"  
 
 COCO_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 

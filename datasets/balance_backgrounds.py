@@ -12,8 +12,8 @@ TARGET_BG_RATIO = 0.08  # 8% backgrounds
 RNG_SEED = 42  # deterministic sampling
 
 ROOT = Path(__file__).resolve().parent
-SRC_ROOT = ROOT / "train_val_dataset_sliced_balanced_upsampled"
-DST_ROOT = ROOT / "train_val_dataset_sliced_balanced_upsampled_bg8"
+SRC_ROOT = ROOT / "new_128_train_val_dataset_sliced_balanced_downsampled"
+DST_ROOT = ROOT / "new_128_train_val_dataset_sliced_balanced_downsampled_bg8"
 SPLITS = ["train", "val"]
 IMG_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff")
 

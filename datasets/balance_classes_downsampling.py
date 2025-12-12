@@ -13,8 +13,8 @@ from pathlib import Path
 
 RNG_SEED = 42
 ROOT = Path(__file__).resolve().parent
-SRC_ROOT = ROOT / "train_val_dataset_sliced"
-DST_ROOT = ROOT / "train_val_dataset_sliced_balanced_downsampled"
+SRC_ROOT = ROOT / "new_128_train_val_dataset_sliced"
+DST_ROOT = ROOT / "new_128_train_val_dataset_sliced_balanced_downsampled"
 SPLITS = ["train", "val"]
 IMG_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff")
 
