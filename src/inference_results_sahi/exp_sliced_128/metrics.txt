@@ -1,4 +1,4 @@
-Model: chip_defect_detection/new_dataset_sliced_128_balanced_upsampled_bg50_augmentation_without_mosaic_imgsz_768_/weights/best.pt
+Model: models/new_dataset_sliced_128_balanced_upsampled_bg50_augmentation_without_mosaic_imgsz_768_/weights/best.pt
 Confidence Threshold: 0.5
 Evaluation Split: val
 

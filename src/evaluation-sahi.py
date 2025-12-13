@@ -1,3 +1,8 @@
+"""\
+Inference script using SAHI for sliced inference with YOLO models on full images.
+
+Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
+"""
 import os
 import argparse
 import json

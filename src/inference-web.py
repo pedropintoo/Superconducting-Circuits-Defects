@@ -1,3 +1,8 @@
+"""\
+Inference web app for chip defect detection using SAHI-sliced YOLO models.
+
+Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
+"""
 import base64
 import io
 import time
@@ -11,7 +16,7 @@ from sahi import AutoDetectionModel
 
 
 ROOT = Path(__file__).resolve().parent
-RUNS_DIR = ROOT / "chip_defect_detection"
+RUNS_DIR = ROOT / "models"
 SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
 DEMO_IMAGE_PATHS = [
     ROOT / ".." / "datasets" / "full_dataset" / f"Second_Batch-PM250715p2-251103_Post_DUV_Strip-dark-{i:06d}.jpg" for i in range(37, 48)
@@ -141,7 +146,7 @@ st.caption("Upload a single image or a .zip folder of images to preview SAHI-sli
 
 runs = list_available_runs()
 if not runs:
-    st.error("No trained runs found under chip_defect_detection. Train a model first to enable the demo.")
+    st.error("No trained runs found under models. Train a model first to enable the demo.")
     st.stop()
 
 run_labels = [run["label"] for run in runs]
