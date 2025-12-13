@@ -150,7 +150,13 @@ if not runs:
     st.stop()
 
 run_labels = [run["label"] for run in runs]
-selected_run = st.sidebar.selectbox("Model checkpoint", run_labels, index=len(run_labels) - 1)
+
+# Pick the selected run's weight path
+if any(run["label"] == "best_model" for run in runs):
+    selected_run = st.sidebar.selectbox("Model checkpoint", run_labels, index=run_labels.index("best_model"))
+else:
+    selected_run = st.sidebar.selectbox("Model checkpoint", run_labels, index=len(run_labels) - 1)
+
 selected_weight = next(run for run in runs if run["label"] == selected_run)["weight"]
 
 confidence = st.sidebar.slider("Confidence threshold", min_value=0.05, max_value=0.95, value=0.5, step=0.05)
