@@ -13,15 +13,22 @@ class YoloFormat:
         
     def fill_images(self, already_splitted: bool = False):
         if not already_splitted:
-            if os.listdir(self.images_path_yolo):
+            if os.path.exists(self.images_path_yolo) and os.listdir(self.images_path_yolo):
                 print("Yolo images folder is not empty, aborting...")
                 return
+            
+            if not os.path.exists(self.images_path_yolo):
+                os.makedirs(self.images_path_yolo, exist_ok=True)
             
             for label_file in os.listdir(self.labels_path):
                 image_file = os.path.join(RELATIVE_PATH, self.images_path, label_file.replace(".txt", ".jpg"))
                 img = cv2.imread(image_file)
-                output_path = os.path.join(self.images_path_yolo, label_file.replace(".txt", ".jpg"))
-                cv2.imwrite(output_path, img)
+                if img is not None:
+                    output_path = os.path.join(self.images_path_yolo, label_file.replace(".txt", ".jpg"))
+                    cv2.imwrite(output_path, img)
+                    print(f"Saved image: {output_path}")
+                else:
+                    print(f"Failed to read image: {image_file}")
         # Just need to create images for /train and /val folders
         else:
             if not os.path.exists(self.images_path_yolo):
