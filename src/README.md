@@ -1,6 +1,6 @@
 # SAHI Inference & Evaluation Script
 
-This script (`evaluation-sahi.py`) runs **YOLO + SAHI inference on full-resolution images**. It merges sliced predictions back into global coordinates, compares them against ground-truth labels, and computes real-world performance metrics, not just slice-level metrics.
+This script (`eval-sahi.py`) runs **YOLO + SAHI inference on full-resolution images**. It merges sliced predictions back into global coordinates, compares them against ground-truth labels, and computes real-world performance metrics, not just slice-level metrics.
 
 ## Features
 
@@ -16,7 +16,7 @@ Run the script from the terminal.
 Example command:
 
 ```bash
-python evaluation-sahi.py \
+python eval-sahi.py \
     --weights models/best_model/weights/best.pt \
     --split val \
     --data_root ../datasets/train_val_dataset

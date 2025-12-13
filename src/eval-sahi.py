@@ -2,7 +2,7 @@
 Inference script using SAHI for sliced inference with YOLO models on full images.
 
 Usage:
-    python evaluation-sahi.py \
+    python eval-sahi.py \
         --weights models/best_model/weights/best.pt \
         --split val \
         --data_root ../datasets/train_val_dataset

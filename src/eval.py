@@ -13,7 +13,7 @@ model = YOLO(best)
 model.val(
     data="dataset.yaml",
     imgsz=768,
-    batch=-1,
+    batch=32,
     save=True,
     project="inference_results",
     name=f"{best.split('/')[1]}_validation",
