@@ -18,7 +18,7 @@ import numpy as np
 EXAMPLE = "LO_mark"
 # ----------------------------------------------------------------
 
-best = "chip_defect_detection/new_dataset_sliced_128_balanced_upsampled_bg8_augmentation_without_mosaic/weights/best.pt"
+best = "chip_defect_detection/new_dataset_sliced_128_balanced_upsampled_bg20_augmentation_without_mosaic_imgsz_7682/weights/best.pt"
 print(f"Using model: {best} for inference.")
 
 examples = {
@@ -42,7 +42,7 @@ model = AutoDetectionModel.from_pretrained(
 )
 
 results = []
-for image_path in examples[EXAMPLE][1:2 ]:  # Process all examples
+for image_path in examples[EXAMPLE][1:4 ]:  # Process all examples
     t0 = cv2.getTickCount()
     result = get_sliced_prediction(
         image_path,

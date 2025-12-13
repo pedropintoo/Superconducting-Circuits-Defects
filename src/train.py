@@ -7,7 +7,7 @@ import cv2
 settings.update({"tensorboard": True})
 
 trainings = [
-    ("new_dataset_sliced_128_balanced_upsampled_bg20_augmentation_without_mosaic_imgsz_768", -1, 768, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
+    ("new_dataset_sliced_128_balanced_upsampled_bg50_augmentation_without_mosaic_imgsz_768_", -1, 768, "yolo11n", 0.25, 0.7, 0.6, 0.5, True),
 ]
 
 for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in trainings:
@@ -18,7 +18,7 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
     model = YOLO(f"{yolo_version}.pt")
 
     results = model.train(
-        data="new_128_dataset_sliced_balanced_upsampled_bg20.yaml",
+        data="new_128_dataset_sliced_balanced_upsampled_bg50.yaml",
         epochs=200, 
         imgsz=imgsz,
         batch=batch,
