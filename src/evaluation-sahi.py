@@ -1,6 +1,12 @@
 """\
 Inference script using SAHI for sliced inference with YOLO models on full images.
 
+Usage:
+    python evaluation-sahi.py \
+        --weights models/best_model/weights/best.pt \
+        --split val \
+        --data_root ../datasets/train_val_dataset
+
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
 import os
@@ -37,7 +43,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="YOLO + SAHI Inference and Evaluation on Full Images")
     parser.add_argument("--split", type=str, default="val", help="Dataset split to evaluate")
     parser.add_argument("--weights", type=str, required=True, help="Path to best.pt")
-    parser.add_argument("--data_root", type=str, default="../datasets/new_train_val_dataset", help="Root path of dataset")
+    parser.add_argument("--data_root", type=str, default="../datasets/train_val_dataset", help="Root path of dataset")
     parser.add_argument("--project", type=str, default="inference_results_sahi", help="Save results to project/name")
     parser.add_argument("--name", type=str, default="exp", help="Save results to project/name")
     return parser.parse_args()

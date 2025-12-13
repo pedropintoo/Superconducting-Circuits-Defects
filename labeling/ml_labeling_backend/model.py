@@ -7,7 +7,9 @@ from urllib.parse import parse_qs, urlparse
 
 from label_studio_ml.model import LabelStudioMLBase
 from label_studio_ml.response import ModelResponse
-from ultralytics import YOLO
+from sahi import AutoDetectionModel
+from sahi.predict import get_sliced_prediction
+from PIL import Image
 
 import logging
 
@@ -30,30 +32,6 @@ def _parse_run_index(run_name: str) -> int:
     if suffix == "":
         return 0
     return int(suffix) if suffix.isdigit() else -1
-
-
-def get_latest_model_path() -> Path:
-    """Return the path to the best.pt weights from the most recent training run."""
-    if not RUNS_DIR.exists():
-        raise FileNotFoundError(f"Runs directory not found: {RUNS_DIR}")
-
-    runs = []
-    for run_dir in RUNS_DIR.iterdir():
-        if not run_dir.is_dir() or not run_dir.name.startswith("run"):
-            continue
-        weight_path = run_dir / "weights" / "best.pt"
-        if not weight_path.exists():
-            continue
-        idx = _parse_run_index(run_dir.name)
-        if idx >= 0:
-            runs.append((idx, weight_path))
-
-    if not runs:
-        raise FileNotFoundError("No trained runs with best.pt found under " + str(RUNS_DIR))
-
-    runs.sort(key=lambda x: x[0])
-    return runs[-1][1]
-
 
 def resolve_local_path(url: str) -> str:
     """
@@ -87,13 +65,20 @@ def resolve_local_path(url: str) -> str:
 # Label Studio ML Backend
 # ---------------------------------------------------------------------------
 CONFIDENCE_FACTOR = 0.1
+SLICE_HEIGHT = 256
+SLICE_WIDTH = 256
+SLICE_OVERLAP = 0.2
 class NewModel(LabelStudioMLBase):
     """YOLO-based ML Backend for chip defect detection."""
 
     def setup(self):
         """Load the YOLO model once when the backend starts."""
-        model_path = get_latest_model_path()
-        self.model = YOLO(str(model_path))
+        model_path = RUNS_DIR / "best_model" / "weights" / "best.pt"
+        self.model = AutoDetectionModel.from_pretrained(
+            model_type="ultralytics",
+            model_path=str(model_path),
+            confidence_threshold=CONFIDENCE_FACTOR,
+        )
         self.set("model_version", model_path.parent.parent.name)  # e.g. "run5"
         logger.warning(f"[ML Backend] Loaded model from {model_path}")
 
@@ -130,42 +115,47 @@ class NewModel(LabelStudioMLBase):
             except FileNotFoundError:
                 local_path = self.get_local_path(image_url, task_id=task.get("id"))
 
-            # Run inference
-            results = self.model.predict(local_path, conf=CONFIDENCE_FACTOR, verbose=False)
-            result_obj = results[0]
+            # Run sliced inference via SAHI
+            pil_image = Image.open(local_path).convert("RGB")
+            result_obj = get_sliced_prediction(
+                pil_image,
+                self.model,
+                slice_height=SLICE_HEIGHT,
+                slice_width=SLICE_WIDTH,
+                overlap_height_ratio=SLICE_OVERLAP,
+                overlap_width_ratio=SLICE_OVERLAP,
+                verbose=0,
+            )
 
-            # Convert YOLO boxes to Label Studio format
+            # Convert predictions to Label Studio format
             task_results = []
-            img_width, img_height = result_obj.orig_shape[1], result_obj.orig_shape[0]
+            img_width, img_height = pil_image.size
 
-            if result_obj.boxes is not None:
-                for box in result_obj.boxes:
-                    x1, y1, x2, y2 = box.xyxy[0].tolist()
-                    conf = float(box.conf[0])
-                    cls_id = int(box.cls[0])
-                    label = self.model.names.get(cls_id, str(cls_id))
+            for obj in result_obj.object_prediction_list:
+                x1, y1, x2, y2 = obj.bbox.to_xyxy()
+                conf = float(obj.score.value)
+                label = obj.category.name
 
-                    # Label Studio expects percentages
-                    x_pct = (x1 / img_width) * 100
-                    y_pct = (y1 / img_height) * 100
-                    w_pct = ((x2 - x1) / img_width) * 100
-                    h_pct = ((y2 - y1) / img_height) * 100
+                x_pct = (x1 / img_width) * 100
+                y_pct = (y1 / img_height) * 100
+                w_pct = ((x2 - x1) / img_width) * 100
+                h_pct = ((y2 - y1) / img_height) * 100
 
-                    task_results.append({
-                        "id": str(uuid.uuid4())[:8],
-                        "from_name": from_name,
-                        "to_name": to_name,
-                        "type": "rectanglelabels",
-                        "value": {
-                            "x": x_pct,
-                            "y": y_pct,
-                            "width": w_pct,
-                            "height": h_pct,
-                            "rotation": 0,
-                            "rectanglelabels": [label],
-                        },
-                        "score": conf,
-                    })
+                task_results.append({
+                    "id": str(uuid.uuid4())[:8],
+                    "from_name": from_name,
+                    "to_name": to_name,
+                    "type": "rectanglelabels",
+                    "value": {
+                        "x": x_pct,
+                        "y": y_pct,
+                        "width": w_pct,
+                        "height": h_pct,
+                        "rotation": 0,
+                        "rectanglelabels": [label],
+                    },
+                    "score": conf,
+                })
 
             predictions.append({
                 "model_version": self.get("model_version"),

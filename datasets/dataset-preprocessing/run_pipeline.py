@@ -55,6 +55,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--split-ratios", nargs="+", type=float, default=[0.8, 0.2], help="Ratios for prepare_labels_and_split (len 2=train/val or 3=train/val/test)")
     parser.add_argument("--clean-targets", action="store_true", help="Clean intermediate output folders before running each step")
     parser.add_argument("--output-dir", type=Path, default=Path("../train_val_dataset_preprocessed"))
+    parser.add_argument("--splits-output-dir", type=Path, default=Path("../train_val_dataset"), help="YOLO format output directory for prepare_labels_and_split")
     return parser.parse_args()
 
 
@@ -129,6 +130,11 @@ def run_pipeline(args: argparse.Namespace) -> None:
                 rng_seed=rng_seed,
                 splits_override=None,
             )
+            new_dir = args.splits_output_dir
+            if new_dir.exists():
+                shutil.rmtree(new_dir)
+            shutil.copytree(current_yolo, new_dir)
+            print(f"\nDone. Output copies to: {new_dir}\n")
             continue
 
         if action == "yolo_to_coco":
