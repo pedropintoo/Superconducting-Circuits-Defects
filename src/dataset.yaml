@@ -1,6 +1,7 @@
-path: ../datasets/train_val_dataset_preprocessed/ # dataset root dir
+path: ../datasets/processed_dataset/ # dataset root dir
 train: images/train # training images
 val: images/val # validation images
+test: images/test # test images (optional)
 
 # Classes
 names:

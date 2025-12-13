@@ -4,8 +4,7 @@ datasets/*
 !datasets/dataset-preprocessing
 datasets/dataset-preprocessing/tmp_pipeline
 !datasets/README.md
-!datasets/train_val_dataset
-!datasets/train_val_dataset.yaml
+!datasets/labeling_output
 !datasets/convert_to_unique.sh
 !datasets/labels_raw
 !datasets/train_val_dataset_sliced

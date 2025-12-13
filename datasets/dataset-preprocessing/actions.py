@@ -26,8 +26,7 @@ def ensure_dir(path: Path) -> None:
 
 def list_images(images_dir: Path) -> List[Path]:
     if not images_dir.exists():
-        print(f"[WARN] list_images: missing {images_dir}")
-        return []
+        raise FileNotFoundError(f"[WARN] list_images: missing {images_dir}")
     return sorted([p for p in images_dir.iterdir() if p.suffix.lower() in IMG_EXTS])
 
 
@@ -38,6 +37,23 @@ def copy_label(src_label: Path, dst_label: Path) -> None:
         shutil.copy2(src_label, dst_label)
     else:
         dst_label.write_text("", encoding="utf-8")
+
+
+def find_image_for_label(stem: str, images_root: Path) -> Path | None:
+    """Return the first image file matching the label stem under images_root."""
+    for ext in IMG_EXTS:
+        candidate = images_root / f"{stem}{ext}"
+        if candidate.exists():
+            return candidate
+    return None
+
+
+def load_classes_from_file(root: Path) -> dict[int, str]:
+    classes_txt = root / "classes.txt"
+    if not classes_txt.exists():
+        return {}
+    lines = [ln.strip() for ln in classes_txt.read_text(encoding="utf-8").splitlines() if ln.strip()]
+    return {i: name for i, name in enumerate(lines)}
 
 
 # -----------------
@@ -125,6 +141,95 @@ def yolo_to_coco(
 
 
 # -----------------
+# Prepare labels and split (labels-only -> YOLO splits with images)
+# -----------------
+
+def prepare_labels_and_split(
+    labels_root: Path,
+    images_root: Path,
+    yolo_out: Path,
+    split_ratios: List[float],
+    rng_seed: int,
+    splits_override: Iterable[str] | None = None,
+) -> Path:
+    """Prepare YOLO splits from labels-only + full images (mirrors process_labeling.py behavior)."""
+
+    random.seed(rng_seed)
+
+    # Detect if labels are already split
+    labels_dir = labels_root / "labels" if (labels_root / "labels").exists() else labels_root
+    has_split = (labels_dir / "train").exists() and (labels_dir / "val").exists()
+
+    def copy_pair(lbl_path: Path, split: str) -> None:
+        stem = lbl_path.stem
+        img_path = find_image_for_label(stem, images_root)
+        if img_path is None:
+            raise FileNotFoundError(f"[WARN] Missing image for label {lbl_path} in {images_root}")
+        dst_img = yolo_out / "images" / split / img_path.name
+        dst_lbl = yolo_out / "labels" / split / lbl_path.name
+        ensure_dir(dst_img.parent)
+        ensure_dir(dst_lbl.parent)
+        shutil.copy2(img_path, dst_img)
+        shutil.copy2(lbl_path, dst_lbl)
+
+    split_counts = {"train": 0, "val": 0, "test": 0}
+
+    if has_split:
+        # Copy existing split structure
+        for split in ["train", "val", "test"]:
+            split_dir = labels_dir / split
+            if not split_dir.exists():
+                continue
+            for lbl_path in split_dir.glob("*.txt"):
+                copy_pair(lbl_path, split)
+                split_counts[split] += 1
+    else:
+        # Fresh split (train/val or train/val/test)
+        ratios = list(split_ratios)
+        if len(ratios) == 2:
+            split_names = ["train", "val"]
+        elif len(ratios) == 3:
+            split_names = ["train", "val", "test"]
+        else:
+            raise ValueError("split_ratios must have length 2 or 3")
+
+        if splits_override is not None:
+            split_names = list(splits_override)
+        if len(split_names) != len(ratios):
+            raise ValueError("splits length must match split_ratios length")
+        total_ratio = sum(ratios)
+        if not 0.99 <= total_ratio <= 1.01:
+            raise ValueError("split_ratios must sum to ~1.0")
+
+        labels_list = sorted(lbl for lbl in labels_dir.glob("*.txt"))
+        if not labels_list:
+            raise FileNotFoundError(f"No label files found in {labels_dir}")
+        random.shuffle(labels_list)
+        n = len(labels_list)
+        counts = [int(round(r * n)) for r in ratios]
+        diff = n - sum(counts)
+        if diff != 0:
+            counts[0] += diff
+
+        idx = 0
+        for split, count in zip(split_names, counts):
+            for _ in range(count):
+                if idx >= n:
+                    break
+                copy_pair(labels_list[idx], split)
+                split_counts[split] += 1
+                idx += 1
+
+    classes_txt = labels_root / "classes.txt"
+    if classes_txt.exists():
+        shutil.copy2(classes_txt, yolo_out / "classes.txt")
+
+    summary = ", ".join([f"{k}:{v}" for k, v in split_counts.items() if v >= 0])
+    print(f"[PREP] Split prepared -> {yolo_out} ({summary})")
+    return yolo_out
+
+
+# -----------------
 # COCO slicing
 # -----------------
 
@@ -180,8 +285,7 @@ def coco_to_yolo(
         instances_path = coco_root / split / coco_json_name
         
         if not instances_path.exists():
-            print(f"[WARN] Missing {instances_path}, skipping split '{split}'")
-            continue
+            raise FileNotFoundError(f"[WARN] Missing {instances_path} for split '{split}'")
 
         with instances_path.open("r", encoding="utf-8") as f:
             coco = json.load(f)
