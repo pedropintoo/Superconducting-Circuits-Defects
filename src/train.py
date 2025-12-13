@@ -14,11 +14,11 @@ settings.update({"tensorboard": True})
 # -- Training configurations
 trainings = [
     {
-        "name": "new_dataset_sliced_256_balanced_upsampled_bg50_augmentation_without_mosaic_imgsz_768_",
+        "name": "run_yolo11n_768_balanced",
         "epochs": 100,
         "imgsz": 768,
         "yolo_version": "yolo11n",
-        "batch": 16,  # Add appropriate batch size
+        "batch": 16,
     }
 ]
 
