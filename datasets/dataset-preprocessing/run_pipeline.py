@@ -60,6 +60,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--slice-width", type=int, default=128)
     parser.add_argument("--slice-overlap", type=float, default=0.2)
     parser.add_argument("--splits", nargs="+", default=["train", "val"])
+    parser.add_argument("--clean-targets", action="store_true", help="Clean intermediate output folders before running each step")
+    parser.add_argument("--output-dir", type=Path, default=Path("../train_val_dataset_preprocessed"))
     return parser.parse_args()
 
 
@@ -168,9 +170,16 @@ def run_pipeline(args: argparse.Namespace) -> None:
         else:
             print(f"[WARN] Unknown action '{action}', skipping")
 
-    # Always clean intermediates except the final output
-    for path in [coco_out, sliced_out, yolo_from_coco, bg_out, class_out]:
-        if path != current_yolo and path.exists():
+    # Final output copy
+    final_output = args.output_dir
+    if final_output.exists():
+        shutil.rmtree(final_output)
+    shutil.copytree(current_yolo, final_output)
+    print(f"\nFinal dataset copied to: {final_output}")
+
+    # Clean intermediates
+    if args.clean_targets:
+        for path in [coco_out, sliced_out, yolo_from_coco, bg_out, class_out]:
             shutil.rmtree(path)
 
     print(f"\nPipeline finished. Final YOLO dataset at: {current_yolo}")
