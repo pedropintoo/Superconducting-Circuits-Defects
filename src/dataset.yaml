@@ -1,8 +1,8 @@
-path: ../datasets/train_val_dataset/ # dataset root dir
-train: images/train # train images (relative to 'path')
-val: images/val # val images (relative to 'path')
+path: ../datasets/train_val_dataset_preprocessed/ # dataset root dir
+train: images/train # training images
+val: images/val # validation images
 
 # Classes
 names:
   0: Critical
-  1: Non-Critical
+  1: Dirt-Wire

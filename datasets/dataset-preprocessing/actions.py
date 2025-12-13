@@ -396,6 +396,10 @@ def balance_classes_upsample(
             total_c += c_count
             total_nc += nc_count
 
+        print(
+            f"[CLS-UP] Split '{split}': Initial Critical {total_c}, Dirt-Wire {total_nc}, BG {len(background_imgs)}"
+        )
+
         target = max(total_c, total_nc)
         needed_c = target - total_c
         extras_c = []

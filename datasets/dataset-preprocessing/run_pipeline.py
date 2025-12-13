@@ -60,7 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--slice-width", type=int, default=128)
     parser.add_argument("--slice-overlap", type=float, default=0.2)
     parser.add_argument("--splits", nargs="+", default=["train", "val"])
-    parser.add_argument("--clean-targets", action="store_true", help="Clean intermediate output folders before running each step")
+    parser.add_argument("--clean-targets", action="store_true", help="Clean intermediate output folders before running each step", default=True)
     parser.add_argument("--output-dir", type=Path, default=Path("../train_val_dataset_preprocessed"))
     return parser.parse_args()
 

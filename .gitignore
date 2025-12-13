@@ -1,6 +1,8 @@
 
 datasets/*
 !datasets/.gitkeep
+!datasets/dataset-preprocessing
+datasets/dataset-preprocessing/tmp_pipeline
 !datasets/README.md
 !datasets/train_val_dataset
 !datasets/train_val_dataset.yaml

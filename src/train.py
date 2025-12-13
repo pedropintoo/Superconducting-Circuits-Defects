@@ -18,7 +18,7 @@ for name, batch, imgsz, yolo_version, hsv_h, hsv_s, hsv_v, scale, extra_aug in t
     model = YOLO(f"{yolo_version}.pt")
 
     results = model.train(
-        data="new_128_dataset_sliced_balanced_upsampled_bg50.yaml",
+        data="dataset.yaml",
         epochs=200, 
         imgsz=imgsz,
         batch=batch,
