@@ -1,4 +1,5 @@
 inference_results
-chip_defect_detection
+models
+demo_data
 *.pt
-!yolo11s.pt
+inference_results_sahi/

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 # Helper: locate the latest trained YOLO run
 # ---------------------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent
-RUNS_DIR = ROOT.parent.parent / "src" / "chip_defect_detection"
+RUNS_DIR = ROOT.parent.parent / "src" / "models"
 
 # Base path that Label Studio's local-files storage is relative to.
 # Adjust if your LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT differs.
