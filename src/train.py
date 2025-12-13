@@ -18,7 +18,7 @@ trainings = [
         "epochs": 100,
         "imgsz": 768,
         "yolo_version": "yolo11n",
-        "batch": 16,
+        "batch": -1,    # -1 for auto batch size
     }
 ]
 
