@@ -3,13 +3,13 @@ Inference web app for chip defect detection using SAHI-sliced YOLO models.
 
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
-import base64
 import io
 import time
 import zipfile
 from pathlib import Path
 
 import streamlit as st
+import torch
 from PIL import Image, ImageDraw, ImageFont
 from sahi.predict import get_sliced_prediction
 from sahi import AutoDetectionModel
@@ -21,6 +21,7 @@ SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff"}
 DEMO_IMAGE_PATHS = [
     ROOT / ".." / "datasets" / "full_dataset" / f"Second_Batch-PM250715p2-251103_Post_DUV_Strip-dark-{i:06d}.jpg" for i in range(37, 48)
 ]
+QUEUE_LIMIT = 50
 
 
 @st.cache_data(show_spinner=False)
@@ -62,11 +63,12 @@ def _image_from_bytes(data: bytes) -> Image.Image:
     return Image.open(io.BytesIO(data)).convert("RGB")
 
 
-def _to_data_url(image: Image.Image) -> str:
+def _to_png_bytes(image: Image.Image) -> bytes:
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
-    b64 = base64.b64encode(buffer.getvalue()).decode("ascii")
-    return f"data:image/png;base64,{b64}"
+    return buffer.getvalue()
+
+
 
 
 def _draw_result(image: Image.Image, result) -> Image.Image:
@@ -106,6 +108,7 @@ def _format_badge(label: str, count: int, color: str) -> str:
     return f"<span style='color:{badge_color}; font-weight:bold'>{label}: {count}</span>"
 
 
+@st.cache_data(show_spinner=False)
 def _demo_images():
     samples = []
     for path in DEMO_IMAGE_PATHS:
@@ -132,6 +135,7 @@ def _annotate_image(model, data: bytes, slice_h: int, slice_w: int, overlap: flo
     return annotated, result
 
 
+@st.cache_data(show_spinner=False)
 def _extract_images_from_zip(zip_bytes: bytes):
     images = []
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as archive:
@@ -147,6 +151,18 @@ def _extract_images_from_zip(zip_bytes: bytes):
                 images.append((Path(info.filename).name, file.read()))
 
     return images
+
+
+def _available_devices() -> list[str]:
+    devices = ["cpu"]
+    if torch.cuda.is_available():
+        devices.insert(0, "cuda")
+    return devices
+
+
+def _trim_queue():
+    if len(st.session_state["pending_images"]) > QUEUE_LIMIT:
+        st.session_state["pending_images"] = st.session_state["pending_images"][-QUEUE_LIMIT:]
 
 
 st.set_page_config(page_title="Chip Defect Detection", layout="wide")
@@ -168,13 +184,15 @@ else:
 
 selected_weight = next(run for run in runs if run["label"] == selected_run)["weight"]
 
+device_choice = st.sidebar.selectbox("Device", _available_devices(), help="Use GPU (cuda) when available for faster inference.")
+
 confidence = st.sidebar.slider("Confidence threshold", min_value=0.05, max_value=0.95, value=0.5, step=0.05)
 slice_height = st.sidebar.number_input("Slice height", min_value=64, max_value=1024, value=256, step=32)
 slice_width = st.sidebar.number_input("Slice width", min_value=64, max_value=1024, value=256, step=32)
 slice_overlap = st.sidebar.slider("Slice overlap", min_value=0.0, max_value=0.9, value=0.2, step=0.05)
 max_images = st.sidebar.slider("Max images to process", min_value=1, max_value=25, value=10)
 
-model = load_model(str(selected_weight), conf=confidence)
+model = load_model(str(selected_weight), conf=confidence, device=device_choice)
 
 input_mode = st.radio(
     "What would you like to upload?",
@@ -184,6 +202,8 @@ input_mode = st.radio(
 
 if "pending_images" not in st.session_state:
     st.session_state["pending_images"] = []
+if "results" not in st.session_state:
+    st.session_state["results"] = []
 
 if input_mode == "Single images":
     uploads = st.file_uploader(
@@ -192,6 +212,8 @@ if input_mode == "Single images":
         accept_multiple_files=True
     )
     if uploads:
+        st.session_state["pending_images"] = []
+        st.session_state["results"] = []
         for file in uploads:
             file.seek(0)
             data = file.read()
@@ -200,13 +222,16 @@ if input_mode == "Single images":
                 st.warning(f"Skipping unsupported file: {file.name}")
                 continue
             st.session_state["pending_images"].append((file.name, data))
+        _trim_queue()
 else:
     uploaded_zip = st.file_uploader("Upload a .zip archive", type=["zip"])
     if uploaded_zip is not None:
         uploaded_zip.seek(0)
         extracted = _extract_images_from_zip(uploaded_zip.read())
         if extracted:
-            st.session_state["pending_images"].extend(extracted)
+            st.session_state["pending_images"] = extracted
+            st.session_state["results"] = []
+            _trim_queue()
         else:
             st.warning("No supported image files were found inside the archive.")
 
@@ -215,6 +240,7 @@ if demo_clicked:
     demo_imgs = _demo_images()
     if demo_imgs:
         st.session_state["pending_images"].extend(demo_imgs)
+        _trim_queue()
         st.success(f"Loaded {len(demo_imgs)} demo image(s).")
     else:
         st.warning("No demo images found. Update DEMO_IMAGE_PATHS with valid jpg/png files.")
@@ -228,29 +254,57 @@ else:
 
 run_inference = st.button("Generate predictions", disabled=not pending_images)
 
-if run_inference and pending_images:
-    with st.spinner("Running inference..."):
-        for name, data in pending_images:
-            try:
-                start = time.perf_counter()
-                annotated, result = _annotate_image(model, data, slice_height, slice_width, slice_overlap)
-                elapsed_ms = (time.perf_counter() - start) * 1000
-            except Exception as exc:  # noqa: BLE001 - present errors to the user
-                st.error(f"Failed to process {name}: {exc}")
-                continue
+# Container to show results incrementally
+results_container = st.container()
 
-            orig_img = _image_from_bytes(data)
-            display_orig = _resize_for_display(orig_img)
-            display_annotated = _resize_for_display(annotated)
+# If results exist and user didn't click run again, reuse them so downloads don't re-trigger inference
+show_results = st.session_state["results"] if (st.session_state["results"] and not run_inference) else []
+
+if run_inference and pending_images:
+    computed_results = []
+    progress = st.progress(0, text="Running inference...")
+    total = len(pending_images)
+    for idx, (name, data) in enumerate(pending_images, start=1):
+        try:
+            start = time.perf_counter()
+            annotated, result = _annotate_image(model, data, slice_height, slice_width, slice_overlap)
+            elapsed_ms = (time.perf_counter() - start) * 1000
+        except Exception as exc:  # noqa: BLE001 - present errors to the user
+            st.error(f"Failed to process {name}: {exc}")
+            progress.progress(min(idx / total, 1.0), text=f"Processed {idx}/{total}")
+            continue
+
+        orig_img = _image_from_bytes(data)
+        display_orig = _resize_for_display(orig_img)
+        display_annotated = _resize_for_display(annotated)
+        crit_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Critical")
+        dirt_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Dirt-Wire")
+
+        computed_results.append(
+            {
+                "name": name,
+                "display_orig": display_orig,
+                "display_annotated": display_annotated,
+                "orig_bytes": _to_png_bytes(orig_img),
+                "annot_bytes": _to_png_bytes(annotated),
+                "detections": len(result.object_prediction_list),
+                "crit": crit_count,
+                "dirt": dirt_count,
+                "elapsed_ms": elapsed_ms,
+            }
+        )
+
+        # Show each result as soon as it's ready
+        with results_container.container():
             cols = st.columns([1, 1])
             with cols[0]:
-                st.image(display_orig, caption=f"Original · {name}", use_container_width=True)
+                st.image(display_orig, caption=f"Original · {name}", width='stretch')
             with cols[1]:
-                detections = len(result.object_prediction_list)
-                st.image(display_annotated, caption=f"Predictions ({detections} boxes) · {name}", use_container_width=True)
-
-                crit_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Critical")
-                dirt_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Dirt-Wire")
+                st.image(
+                    display_annotated,
+                    caption=f"Predictions ({len(result.object_prediction_list)} boxes) · {name}",
+                    width='stretch',
+                )
                 st.markdown(
                     _format_badge("Critical", crit_count, "red")
                     + "<br/>"
@@ -259,11 +313,30 @@ if run_inference and pending_images:
                 )
                 st.caption(f"Inference time: {elapsed_ms:.1f} ms")
 
-            st.markdown(
-                f"[Open original full size]({_to_data_url(orig_img)}) · "
-                f"[Open annotated full size]({_to_data_url(annotated)})",
-                help="Opens the images in a new tab so you can zoom in deeply.",
-            )
+        progress.progress(min(idx / total, 1.0), text=f"Processed {idx}/{total}")
 
+    progress.empty()
+    st.session_state["results"] = computed_results
     st.success("Prediction completed.")
+    st.session_state["pending_images"] = []
+    show_results = []  # already rendered live
+
+if show_results:
+    for idx, res in enumerate(show_results):
+        cols = st.columns([1, 1])
+        with cols[0]:
+            st.image(res["display_orig"], caption=f"Original · {res['name']}", width='stretch')
+        with cols[1]:
+            st.image(
+                res["display_annotated"],
+                caption=f"Predictions ({res['detections']} boxes) · {res['name']}",
+                width='stretch',
+            )
+            st.markdown(
+                _format_badge("Critical", res["crit"], "red")
+                + "<br/>"
+                + _format_badge("Dirt-Wire", res["dirt"], "#0077b6"),
+                unsafe_allow_html=True,
+            )
+            st.caption(f"Inference time: {res['elapsed_ms']:.1f} ms")
     
