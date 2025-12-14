@@ -5,4 +5,8 @@ semver~=3.0.2
 # label-studio-sdk==1.0.2
 label-studio-sdk @ git+https://github.com/HumanSignal/label-studio-sdk.git
 sahi
-
+gunicorn==22.0.0
+label-studio-ml @ git+https://github.com/HumanSignal/label-studio-ml-backend.git
+ultralytics
+opencv-python
+rq

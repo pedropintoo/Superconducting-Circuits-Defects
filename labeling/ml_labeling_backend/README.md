@@ -39,7 +39,7 @@ pip install -r requirements.txt
 Then you can start the ML backend:
 
 ```bash
-label-studio-ml start ./dir_with_your_model
+label-studio-ml start .
 ```
 
 # Configuration
