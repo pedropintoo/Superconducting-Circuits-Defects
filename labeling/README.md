@@ -13,6 +13,8 @@ pip install -r requirements.txt
 
 Note: tested with Ubuntu 24.04 and Label Studio 1.12.0!
 
+or running `./start-label-studio.sh`!!
+
 ```bash
 export FRONTEND_SENTRY_DSN=""
 export SENTRY_DSN=""
