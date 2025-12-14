@@ -92,6 +92,15 @@ def _draw_result(image: Image.Image, result) -> Image.Image:
     return image
 
 
+def _resize_for_display(image: Image.Image, max_dim: int = 1280) -> Image.Image:
+    if max(image.size) <= max_dim:
+        return image
+
+    resized = image.copy()
+    resized.thumbnail((max_dim, max_dim), Image.LANCZOS)
+    return resized
+
+
 def _format_badge(label: str, count: int, color: str) -> str:
     badge_color = color if count > 0 else "#6c757d"
     return f"<span style='color:{badge_color}; font-weight:bold'>{label}: {count}</span>"
@@ -231,12 +240,14 @@ if run_inference and pending_images:
                 continue
 
             orig_img = _image_from_bytes(data)
+            display_orig = _resize_for_display(orig_img)
+            display_annotated = _resize_for_display(annotated)
             cols = st.columns([1, 1])
             with cols[0]:
-                st.image(orig_img, caption=f"Original · {name}", use_container_width=True)
+                st.image(display_orig, caption=f"Original · {name}", use_container_width=True)
             with cols[1]:
                 detections = len(result.object_prediction_list)
-                st.image(annotated, caption=f"Predictions ({detections} boxes) · {name}", use_container_width=True)
+                st.image(display_annotated, caption=f"Predictions ({detections} boxes) · {name}", use_container_width=True)
 
                 crit_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Critical")
                 dirt_count = sum(1 for obj in result.object_prediction_list if obj.category.name == "Dirt-Wire")
