@@ -2,61 +2,64 @@ import collections
 from pathlib import Path
 
 # --- CONFIGURATION ---
-# We check the folder you intend to use as source
-DATASET_DIR = Path(__file__).resolve().parent / "tmp_pipeline/balance_backgrounds"
+DATASET_DIR = Path(__file__).resolve().parent / "../processed_dataset"
+DEFAULT_CLASS_NAMES = {0: "Critical", 1: "Dirt-Wire"}
+
+
+def read_class_names(classes_file: Path) -> dict[int, str]:
+    """Return a mapping of class id to name, falling back to defaults."""
+    if not classes_file.exists():
+        return DEFAULT_CLASS_NAMES.copy()
+
+    lines = classes_file.read_text(encoding="utf-8").strip().splitlines()
+    class_names = {idx: name for idx, name in enumerate(lines)}
+    # Ensure the requested labels are always present
+    class_names.setdefault(0, DEFAULT_CLASS_NAMES[0])
+    class_names.setdefault(1, DEFAULT_CLASS_NAMES[1])
+    return class_names
+
+
+def count_split(label_dir: Path) -> collections.Counter:
+    """Count instances per class id under a split directory."""
+    counts = collections.Counter()
+    if not label_dir.exists():
+        return counts
+
+    for lf in label_dir.glob("*.txt"):
+        for line in lf.read_text(encoding="utf-8").splitlines():
+            parts = line.split()
+            if not parts:
+                continue
+            try:
+                counts[int(parts[0])] += 1
+            except ValueError:
+                continue
+    return counts
+
+
+def print_counts(split: str, counts: collections.Counter, class_names: dict[int, str]):
+    print("-" * 30)
+    print(f"TOTAL INSTANCE COUNTS ({split.upper()}):")
+    for c_id in sorted(counts.keys()):
+        name = class_names.get(c_id, "Unknown")
+        print(f"  Class ID {c_id} ({name}): {counts[c_id]} instances")
+
 
 def count_dataset():
     if not DATASET_DIR.exists():
         print(f"Error: Folder not found: {DATASET_DIR}")
         return
 
-    # 1. Read Class Names
     classes_file = DATASET_DIR / "classes.txt"
-    class_names = {}
-    if classes_file.exists():
-        print(f"Reading classes from: {classes_file.name}")
-        lines = classes_file.read_text(encoding="utf-8").strip().splitlines()
-        for idx, name in enumerate(lines):
-            class_names[idx] = name
-            print(f"  ID {idx}: {name}")
-    else:
-        print("Warning: classes.txt not found. Showing IDs only.")
+    class_names = read_class_names(classes_file)
 
-    print("-" * 30)
+    for split in ("train", "val"):
+        label_dir = DATASET_DIR / "labels" / split
+        counts = count_split(label_dir)
+        if not counts:
+            print(f"Warning: No labels found in {label_dir}")
+        print_counts(split, counts, class_names)
 
-    # 2. Count Instances (TRAIN ONLY)
-    total_counts = collections.Counter()
-    
-    # We only look at 'train' now
-    split = "train"
-    label_dir = DATASET_DIR / "labels" / split
-    
-    if label_dir.exists():
-        print(f"Scanning split '{split}'...")
-        # Get all text files
-        label_files = list(label_dir.glob("*.txt"))
-        
-        for lf in label_files:
-            lines = lf.read_text(encoding="utf-8").strip().splitlines()
-            for line in lines:
-                parts = line.split()
-                if not parts: continue
-                try:
-                    c_id = int(parts[0])
-                    total_counts[c_id] += 1
-                except ValueError:
-                    pass
-    else:
-        print(f"Error: No labels found in {label_dir}")
-
-    print("-" * 30)
-    print("TOTAL INSTANCE COUNTS (TRAIN ONLY):")
-    sorted_ids = sorted(total_counts.keys())
-    
-    for c_id in sorted_ids:
-        name = class_names.get(c_id, "Unknown")
-        count = total_counts[c_id]
-        print(f"  Class ID {c_id} ({name}): {count} instances")
 
 if __name__ == "__main__":
     count_dataset()
