@@ -7,6 +7,9 @@ datasets/dataset-preprocessing/tmp_pipeline
 !datasets/labeling_output
 !datasets/convert_to_unique.sh
 !datasets/labels_raw
+!datasets/full_dataset
+!datasets/processed_dataset
+!datasets/train_val_dataset
 !datasets/train_val_dataset_sliced
 !datasets/train_val_dataset_sliced_bg8
 !datasets/*.sh
@@ -18,6 +21,11 @@ runs
 # any file that ends in .jpg
 *.jpg
 *.png
+
+!datasets/full_dataset/*.jpg
+!datasets/processed_dataset/**/*.png
+!datasets/train_val_dataset/**/*.jpg
+!docs/assets/*.png
 
 # -----------------------------------------------------
 # (template: Python.gitignore)

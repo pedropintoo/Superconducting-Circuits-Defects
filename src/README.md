@@ -1,41 +1,43 @@
-# SAHI Inference & Evaluation Script
+# Source Guide
 
-This script (`eval-sahi.py`) runs **YOLO + SAHI inference on full-resolution images**. It merges sliced predictions back into global coordinates, compares them against ground-truth labels, and computes real-world performance metrics, not just slice-level metrics.
+Entrypoints for training, evaluation, and inference. Default weights: [models/best_model/weights/best.pt](models/best_model/weights/best.pt).
 
-## Features
+## Training
+- [train.py](train.py): Trains YOLO11 on SAHI-sliced data ([../datasets/processed_dataset](../datasets/processed_dataset) via [dataset.yaml](dataset.yaml)). Default run logged under [models/<run>/](../models); best weights saved to [models/best_model/weights/best.pt](models/best_model/weights/best.pt).
+- Configs: [yolo11.yaml](yolo11.yaml) (base), [yolo11-p2.yaml](yolo11-p2.yaml) (optional P2 head for small objects).
 
-* **Full Image Evaluation**: Calculates metrics on global images, not just slices.
-* **Metrics**: Outputs mAP (COCO), Precision, Recall, F1-Score, and Confusion Matrix.
-* **Visualization**: Saves images with Ground Truth (Green) and Predictions (Red) drawn for visual verification.
-* **Experiment Tracking**: Automatically saves results to unique folders (`inference_results_sahi/expN`).
-
-## Usage
-
-Run the script from the terminal.
-
-Example command:
-
+Run:
 ```bash
-python eval-sahi.py \
-    --weights models/best_model/weights/best.pt \
-    --split val \
-    --data_root ../datasets/train_val_dataset
+python3 train.py
 ```
 
-### Arguments
+## Evaluation
+- [eval.py](eval.py): Standard YOLO validation on [dataset.yaml](dataset.yaml) (unsliced metrics).
+    ```bash
+    python3 eval.py --weights models/best_model/weights/best.pt
+    ```
+- [eval-sahi.py](eval-sahi.py): YOLO + SAHI stitched full-image eval (global metrics, confusion, visuals).
+    ```bash
+    python3 eval-sahi.py \
+        --weights models/best_model/weights/best.pt \
+        --split val \
+        --data_root ../datasets/train_val_dataset
+    ```
+Outputs: [inference_results_sahi/exp*/](inference_results_sahi) with metrics.txt, confusion_matrix_sahi.png, visuals/, coco_gt.json, coco_dt.json.
 
-* `--weights`: Path to your trained YOLO `.pt` model.
-* `--split`: Dataset split to evaluate (e.g., `val`, `train`, `test`). Default: `val`.
-* `--data_root`: Path to the dataset root folder (containing `images/` and `labels/`).
-* `--project`: Base folder for saving results. Default: `inference_results_sahi`.
-* `--name`: Name of the experiment subfolder. Default: `exp`.
+## Inference
+- [inference.py](inference.py): CLI demo with SAHI slicing over sample images; writes visuals under [demo_data/](demo_data).
+- [inference-web.py](inference-web.py): Streamlit app; choose weights from models/*/weights/best.pt, upload images/zip or use demos; supports slicing params and confidence threshold.
+    ```bash
+    streamlit run inference-web.py
+    ```
 
-## Output
+## Data config
+- [dataset.yaml](dataset.yaml): Points to [../datasets/processed_dataset](../datasets/processed_dataset) (train/val/test) with classes {0: Critical, 1: Dirt-Wire}.
+- yolo11*.yaml: Model definitions (base and P2 variant).
 
-Results are saved in `inference_results_sahi/expN/` and include:
-
-* `metrics.txt`: Summary of mAP, F1, Precision, and Recall.
-* `confusion_matrix_sahi.png`: Visual confusion matrix.
-* `visuals/`: Images with plotted bounding boxes (GT vs. Prediction).
-* `coco_gt.json` / `coco_dt.json`: Raw COCO-format data files.
+## Outputs & defaults
+- Models: [models/<run>/weights/best.pt](../models) (default referenced as best_model).
+- Eval: [runs/detect/](runs/detect) (YOLO) and [inference_results_sahi/exp*](inference_results_sahi) (SAHI stitched eval).
+- Inference visuals: [demo_data/prediction_visual_*.png](demo_data).
 

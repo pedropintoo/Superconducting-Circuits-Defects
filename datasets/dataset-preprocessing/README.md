@@ -15,15 +15,24 @@ python3 run_pipeline.py \
 ```
 
 In this example we:
-- Use labels from `../labeling_output` and images from `../full_dataset`.
+- Use labels from [../labeling_output](../labeling_output) and images from [../full_dataset](../full_dataset).
 - Split into 80% train / 20% val.
 - Convert labels to COCO format for slicing.
 - Slice into 256x256 tiles with 20% overlap.
 - Convert back to YOLO format.
 - Upsample minority classes to match the majority class count.
 - Balance backgrounds to achieve ~50% background tiles.
-- Write the final dataset to `../processed_dataset`.
+- Write the final dataset to [../processed_dataset](../processed_dataset).
 - Clean up intermediate files.
+
+### Inputs
+- Images: [../full_dataset](../full_dataset)
+- Labels: [../labeling_output](../labeling_output) (YOLO exported from Label Studio + processed)
+
+### Outputs
+- Final YOLO dataset: [../processed_dataset](../processed_dataset)/{images,labels}/{train,val[,test]}
+- Convenience copy for training/eval: [../train_val_dataset](../train_val_dataset)
+- Intermediates: [tmp_pipeline/](tmp_pipeline) (auto-cleaned with --clean-targets)
 
 ## Detailed explanation
 
@@ -35,7 +44,7 @@ Key flags (just the essentials):
 - `--clean-targets`: remove intermediates at the end.
 
 ## What's in this folder
-- `run_pipeline.py`: orchestrates the steps above.
-- `actions.py`: implementations for prepare split, YOLO↔COCO, slicing, class/background balancing.
-- `convert_to_unique.sh`, `count_train_classes.py`, `see_image.py`: small utilities for dataset inspection/debug.
-- Intermediates are written under `tmp_pipeline/` (auto-cleaned when `--clean-targets` is set); final data goes to `--output-dir`.
+- [run_pipeline.py](run_pipeline.py): orchestrates the steps above.
+- [actions.py](actions.py): implementations for prepare split, YOLO↔COCO, slicing, class/background balancing.
+- [convert_to_unique.sh](convert_to_unique.sh), [count_train_classes.py](count_train_classes.py), [see_image.py](see_image.py): small utilities for dataset inspection/debug.
+- Intermediates are written under [tmp_pipeline/](tmp_pipeline) (auto-cleaned when --clean-targets is set); final data goes to --output-dir.
