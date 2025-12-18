@@ -1,6 +1,6 @@
 # Superconducting Defect Detection (YOLO11 + SAHI)
 
-Detecting microscopic fabrication defects on superconducting wafers. We target two defect types, Critical and Dirt-Wire, using a YOLO11 detector enhanced with a P2 head option and SAHI slicing to recover small-object recall. The pipeline includes label standardization (Label Studio), class/background rebalancing, SAHI tiling, and stitched full-image evaluation to approximate deployment conditions. Tested on Ubuntu 24.04 LTS (x86_64) in a VM with Python 3.12.3, Pip 24.0, and an NVIDIA GeForce RTX 4060 (8 GB VRAM).
+Detecting microscopic fabrication defects on superconducting wafers. We target two defect types, Critical and Dirt-Wire, using a YOLO11 detector enhanced with SAHI slicing to recover small-object recall. The pipeline includes label standardization (Label Studio), class/background rebalancing, SAHI tiling, and stitched full-image evaluation to approximate deployment conditions. Tested on Ubuntu 24.04 LTS (x86_64) in a VM with Python 3.12.3, Pip 24.0, and an NVIDIA GeForce RTX 4060 (8 GB VRAM).
 
 
 ## Results Snapshot
