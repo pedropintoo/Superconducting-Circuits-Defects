@@ -51,17 +51,17 @@
 
 ### Final Results (Slice 256, Imgz 768, Bg 50%)
 
-* **COCO Metrics:**
-* mAP @ 0.50: **0.3984**
-* mAP @ 0.50:0.95: **0.1641**
+* **COCO Metrics (global):**
+* mAP @ 0.50: **0.323**
+* mAP @ 0.50:0.95: **0.126**
 
 
-* **Mean F1 Score:** 0.5478
+* **Mean F1 Score:** 0.497
 
 | Class | Precision | Recall | F1-Score |
 | --- | --- | --- | --- |
-| **Critical** | 0.6842 | 0.4483 | 0.5417 |
-| **Dirt-Wire** | 0.6034 | 0.5118 | 0.5538 |
+| **Critical** | 0.435 | 0.435 | 0.435 |
+| **Dirt-Wire** | 0.674 | 0.478 | 0.560 |
 
 * **Conclusion M3:**
 * **Perfect Classification:** Zero confusion between classes (Critical is never predicted as Dirt-Wire and vice versa).
