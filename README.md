@@ -14,7 +14,7 @@ Detecting microscopic fabrication defects on superconducting wafers. We target t
 - P2 head alone helps small objects but needs slicing + balancing to generalize.
 
 **Visual examples**
-- Defect detection prediction (Critical in red, Dirt-Wire in cyan): 2 Criticals and 1 Dirt-Wire were found.
+- Defect detection prediction (Critical in red, Dirt-Wire in cyan): 2 Criticals and 1 Dirt-Wire were found. (running `src/inference.py`)
 ![Prediction example](docs/assets/prediction_example.png)
 
 ## Approach overview
