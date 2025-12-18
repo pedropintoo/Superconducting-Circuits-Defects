@@ -2,7 +2,7 @@
 
 YOLO+SAHI ML backend for Label Studio pre-annotations (Critical, Dirt-Wire). Start via Docker or shell, then register it under Settings → Machine Learning in Label Studio.
 
-## Run without Docker (shell - recommended)
+## Run without Docker (shell)
 Use a dedicated venv. Enable CUDA if you want GPU inference.
 ```bash
 python -m venv ml-backend
