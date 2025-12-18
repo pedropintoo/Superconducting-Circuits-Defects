@@ -1,3 +1,14 @@
+#!/bin/bash
+#
+# Script to start Label Studio with specific configurations for local file serving.
+# 
+# Requirements:
+# - Install requirements.txt in a python virtual environment.
+#
+# Usage: ./start-label-studio.sh
+#
+# Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
+
 export FRONTEND_SENTRY_DSN=""
 export SENTRY_DSN=""
 export COLLECT_ANALYTICS=False
