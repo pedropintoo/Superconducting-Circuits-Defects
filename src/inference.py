@@ -1,3 +1,14 @@
+"""\
+Inference script for YOLOv11 object detection models.
+
+Requirements:
+- Install ../requirements.txt in a python virtual environment.
+- You need to have a trained model under the models/ directory. (defined by the 'best' variable)
+
+Usage: python3 inference.py
+
+Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
+"""
 import os
 from ultralytics import YOLO
 from sahi.predict import get_sliced_prediction
@@ -8,29 +19,22 @@ import numpy as np
 # ----------------------------------------------------------------
 # Define which run to use for inference
 best = "models/best_model/weights/best.pt"
-EXAMPLE = "chips_1"
+EXAMPLE = "DUV_strip"
 # ----------------------------------------------------------------
 
 print(f"Using model: {best} for inference.")
 
 examples = {
-    "dark_big_burn": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-{i:06d}.jpg" for i in range(280, 290)],
-    "dark_open_circuit": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-{i:06d}.jpg" for i in range(240, 250)],
-    "dark_burn": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-{i:06d}.jpg" for i in range(1199, 1211)],
-    "chips_1": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251101_Chips-v2_7500_500_DF-{i:06d}.jpg" for i in range(50, 60)],
-    "dark_2": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-{i:06d}.jpg" for i in range(469, 500)],
-    "white_chips": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251101_Chips-v2_7500_500-{i:06d}.jpg" for i in range(15, 30)],
-    "spir_60": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251028_Spir_60_6-bright-{i:06d}.jpg" for i in range(220, 230)],
-    "LO_mark": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-{i:06d}.jpg" for i in range(366, 370)],
-    "Val_examples": [f"../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-00015{i:01d}.jpg" for i in range(9)],
-    "random" : ["../datasets/full_dataset/RQ3_TWPA_V2_W2-251023_Junctions-dark-001274.jpg"]
+    "spir_60": ["../datasets/full_dataset/Second_Batch-PM251015p1-251028_Spir_60_6-bright-81.jpg"],
+    "LO_mark": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-{i:06d}.jpg" for i in range(341, 346)],
+    "DUV_strip": [f"../datasets/full_dataset/Second_Batch-PM250715p2-251103_Post_DUV_Strip-dark-{i:06d}.jpg" for i in range(61, 68)],
 }
 
 model = AutoDetectionModel.from_pretrained(
     model_type="ultralytics",
     model_path=best,
     confidence_threshold=0.5,
-    # device="cpu"
+    # device="cpu"              # Remember, changing to CPU will cause a significant slowdown!
 )
 
 results = []
@@ -56,12 +60,6 @@ for image_path in examples[EXAMPLE]:  # Process all examples
         f"demo_data/prediction_visual_{os.path.basename(image_path)}.png",
     )
     print(f"Processed and saved results for image: {image_path}")
-
-
-
-
-
-
 
 ## ---------------------------- IMAGE VISUALIZATION ---------------------------- ##
 

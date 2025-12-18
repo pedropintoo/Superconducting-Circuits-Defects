@@ -1,6 +1,11 @@
 """\
 Inference script using SAHI for sliced inference with YOLO models on full images.
 
+Requirements:
+- Install ../requirements.txt in a python virtual environment.
+- You need to have a trained model under the models/ directory. (defined by the 'weights' argument)
+- You need to have a ground truth dataset in YOLO format for evaluation, without slicing. (i.g. ../datasets/train_val_dataset)
+
 Usage:
     python eval-sahi.py \
         --weights models/best_model_256/weights/best.pt \

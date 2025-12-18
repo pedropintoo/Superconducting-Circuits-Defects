@@ -1,6 +1,12 @@
 """\
 Simple evaluation script for YOLOv11 object detection models.
 
+Requirements:
+ - Install ../requirements.txt in a python virtual environment.
+ - You need to have a trained model under the models/ directory. (defined by the 'best' variable)
+ 
+Usage: python3 eval.py
+
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
 from ultralytics import YOLO

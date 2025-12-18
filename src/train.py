@@ -1,6 +1,11 @@
 """\
 Training script for YOLOv11 object detection models.
 
+Requirements:
+- Install ../requirements.txt in a python virtual environment.
+
+Usage: python3 train.py
+
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
 import os
@@ -14,7 +19,7 @@ settings.update({"tensorboard": True})
 # -- Training configurations
 trainings = [
     {
-        "name": "run_yolo11n_768_balanced",
+        "name": "run_yolo11n_768",
         "epochs": 100,
         "imgsz": 768,
         "yolo_version": "yolo11n",

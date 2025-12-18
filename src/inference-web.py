@@ -1,6 +1,12 @@
 """\
 Inference web app for chip defect detection using SAHI-sliced YOLO models.
 
+Requirements:
+- Install ../requirements.txt in a python virtual environment.
+- You need to have a trained model under the models/ directory.
+
+Usage: streamlit run inference-web.py
+
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
 import io
