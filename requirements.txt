@@ -10,3 +10,5 @@ pandas
 scikit-learn
 streamlit
 pycocotools
+scikit-image 
+imagecodecs

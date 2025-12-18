@@ -9,11 +9,11 @@ pip install -r requirements.txt
 
 ## Run Label Studio
 
-> Important: To disable analytics tracking, set all these environment variables to empty strings or `False`!
+> Important: To disable analytics tracking, set all these environment variables to empty strings or False!
 
 Note: tested with Ubuntu 24.04 and Label Studio 1.12.0!
 
-or running `./start-label-studio.sh`!!
+or running [start-label-studio.sh](start-label-studio.sh)!!
 
 ```bash
 export FRONTEND_SENTRY_DSN=""
@@ -36,13 +36,13 @@ Intuition: you just need to create a project, after that, you go to the "Setting
 
 ## Working together in the same project
 
-Then, other users can access the project by going to `http://<ip_address>:8080` in their web browser.  
+Then, other users can access the project by going to http://<ip_address>:8080 in their web browser.  
 
 ## Saving and exporting annotations
 
-Important: to recreate the Label Studio don't forget to export in JSON format!! (see `/backup` folder)
+Important: to recreate the Label Studio don't forget to export in JSON format!! (see [backup/](backup))
 
-To train a YOLO model, you need to export as "YOLO format", and pass it through the `process-labeling.py` script.
+To train a YOLO model, you need to export as "YOLO format", and pass it through the [process-labeling.py](process-labeling.py) script.
 
 ## Help tutorial
 
@@ -51,10 +51,27 @@ https://www.youtube.com/watch?v=R1ozTMrujOE
 
 ## Using ML backend with Label Studio
 
-Inside `ml_labeling_backend/` you can find instructions on how to set up and use the ML backend with Label Studio.
+Inside [model_backend/](model_backend) you can find instructions on how to set up and use the ML backend with Label Studio.
 You just need to run with:
 
 ```bash
 docker-compose up --build
 ```
 This will start the ML backend server that will connect to your Label Studio instance.
+
+### Scripted (no Docker) backend
+- Use a separate environment from Label Studio:
+```bash
+python -m venv ml-backend
+source ml-backend/bin/activate
+pip install -r model_backend/requirements.txt
+```
+- Run the backend (ensure CUDA toolkit is installed if you want GPU acceleration):
+```bash
+cd model_backend
+CONFIDENCE_FACTOR=0.5 SLICE_HEIGHT=256 SLICE_WIDTH=256 SLICE_OVERLAP=0.2 \
+label-studio-ml start .
+```
+- Connect in Label Studio: `Settings -> Machine Learning -> Add Model` and set the URL printed by the backend (default `http://localhost:9090`).
+
+The backend is based on the Label Studio ML template; we customized `model.py` to serve our YOLO+SAHI detector. See [labeling/model_backend/README.md](model_backend/README.md) for details.

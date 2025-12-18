@@ -25,7 +25,7 @@ EXAMPLE = "DUV_strip"
 print(f"Using model: {best} for inference.")
 
 examples = {
-    "spir_60": ["../datasets/full_dataset/Second_Batch-PM251015p1-251028_Spir_60_6-bright-81.jpg"],
+    "spir_60": ["../datasets/full_dataset/Second_Batch-PM251015p1-251028_Spir_60_6-bright-000081.jpg"],
     "LO_mark": [f"../datasets/full_dataset/Second_Batch-PM251015p1-251022_post_LO_mark-dark-{i:06d}.jpg" for i in range(341, 346)],
     "DUV_strip": [f"../datasets/full_dataset/Second_Batch-PM250715p2-251103_Post_DUV_Strip-dark-{i:06d}.jpg" for i in range(61, 68)],
 }
