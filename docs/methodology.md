@@ -41,7 +41,7 @@
 
 
 * **Optimization Tweaks:**
-* **Slice Size**: We initially tested 128px slices to maximize detection of small defects but observed high false positives due to insufficient background context. We settled on **256px**, which provided the optimal balance—retaining sensitivity to small defects while offering enough context to significantly improve precision and reduce false positives.
+* **Slice Size**: We initially tested 128px slices to maximize detection of small defects but observed high false positives due to insufficient background context. We settled on **256px**, which provided the optimal balance, retaining sensitivity to small defects while offering enough context to significantly improve precision and reduce false positives.
 
 
 

@@ -1,6 +1,9 @@
 
-## Setup Label Studio
+## Purpose
+Label, standardize, and serve annotations for the superconducting defect dataset. This guide covers spinning up Label Studio, connecting storage, backing up projects, and attaching the YOLO+SAHI model backend.
 
+## Setup Label Studio
+- Create an isolated environment and install requirements:
 ```bash
 python3 -m venv labelstudio-env
 source labelstudio-env/bin/activate
@@ -8,12 +11,9 @@ pip install -r requirements.txt
 ```
 
 ## Run Label Studio
+> Disable analytics: set these to empty or False. (Very important since we were under NDA when developing.)
 
-> Important: To disable analytics tracking, set all these environment variables to empty strings or False!
-
-Note: tested with Ubuntu 24.04 and Label Studio 1.12.0!
-
-or running [start-label-studio.sh](start-label-studio.sh)!!
+Tested with Ubuntu 24.04 and Label Studio 1.12.0.
 
 ```bash
 export FRONTEND_SENTRY_DSN=""
@@ -26,8 +26,17 @@ export LABEL_STUDIO_LOCAL_FILES_DOCUMENT_ROOT=$HOME
 
 label-studio --host 0.0.0.0 --port 8080 start
 ```
+Or use the helper script: [start-label-studio.sh](start-label-studio.sh).
 
-## Importing data
+## Database and backups
+- Default storage is SQLite under the Label Studio user data directory; for quick setups this is fine.
+- Back up a project by exporting annotations (JSON) from the UI and by copying the Label Studio data directory if you want the database state. A curated export is kept under [backup/](backup).
+
+## Connect the ML model
+- Start the backend (Docker or scripted) as described in [model_backend/README.md](model_backend/README.md).
+- In Label Studio: Settings → Machine Learning → Add Model, set the backend URL (default http://localhost:9090), then Save and Sync.
+
+## Connect storage (import data)
 
 To easily work with a big number of files, it is recommended to use the "Local Storage" option when creating a new project.
 [Documentation](https://labelstud.io/guide/storage#Local-storage)
@@ -48,30 +57,7 @@ To train a YOLO model, you need to export as "YOLO format", and pass it through 
 
 https://www.youtube.com/watch?v=R1ozTMrujOE
 
-
-## Using ML backend with Label Studio
-
-Inside [model_backend/](model_backend) you can find instructions on how to set up and use the ML backend with Label Studio.
-You just need to run with:
-
-```bash
-docker-compose up --build
-```
-This will start the ML backend server that will connect to your Label Studio instance.
-
-### Scripted (no Docker) backend
-- Use a separate environment from Label Studio:
-```bash
-python -m venv ml-backend
-source ml-backend/bin/activate
-pip install -r model_backend/requirements.txt
-```
-- Run the backend (ensure CUDA toolkit is installed if you want GPU acceleration):
-```bash
-cd model_backend
-CONFIDENCE_FACTOR=0.5 SLICE_HEIGHT=256 SLICE_WIDTH=256 SLICE_OVERLAP=0.2 \
-label-studio-ml start .
-```
-- Connect in Label Studio: `Settings -> Machine Learning -> Add Model` and set the URL printed by the backend (default `http://localhost:9090`).
-
-The backend is based on the Label Studio ML template; we customized `model.py` to serve our YOLO+SAHI detector. See [labeling/model_backend/README.md](model_backend/README.md) for details.
+### Notes
+- Default DB is SQLite under the Label Studio data dir; for backups, export JSON from the UI and copy the data dir. Curated exports live in [backup/](backup).
+- Ensure CUDA toolkit is installed if you want GPU acceleration when running the backend script.
+- Backend builds on the Label Studio ML template with a customized model.py for YOLO+SAHI; see [model_backend/README.md](model_backend/README.md).

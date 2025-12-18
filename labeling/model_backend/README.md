@@ -1,59 +1,39 @@
-This guide describes the simplest way to start using ML backend with Label Studio.
+# Label Studio ML Backend for YOLO+SAHI Pre-annotations
 
-## Running with Docker (Recommended)
+YOLO+SAHI ML backend for Label Studio pre-annotations (Critical, Dirt-Wire). Start via Docker or shell, then register it under Settings → Machine Learning in Label Studio.
 
-1. Start Machine Learning backend on `http://localhost:9090` with prebuilt image:
-
-```bash
-docker-compose up
-```
-
-2. Validate that backend is running
-
-```bash
-$ curl http://localhost:9090/
-{"status":"UP"}
-```
-
-3. Connect to the backend from Label Studio running on the same host: go to your project `Settings -> Machine Learning -> Add Model` and specify `http://localhost:9090` as a URL.
-
-
-## Building from source (Advanced)
-
-To build the ML backend from source, you have to clone the repository and build the Docker image:
-
-```bash
-docker-compose build
-```
-
-## Running without Docker (Advanced)
-
-To run the ML backend without Docker, you have to clone the repository and install all dependencies using pip:
-
+## Run without Docker (shell - recommended)
+Use a dedicated venv. Enable CUDA if you want GPU inference.
 ```bash
 python -m venv ml-backend
 source ml-backend/bin/activate
 pip install -r requirements.txt
+
+./start-ml-backend.sh
 ```
 
-Then you can start the ML backend:
+Or, running without bash script:
 
 ```bash
 CONFIDENCE_FACTOR=0.5 SLICE_HEIGHT=256 SLICE_WIDTH=256 SLICE_OVERLAP=0.2 \
 label-studio-ml start .
 ```
 
+Connect in Label Studio: Settings → Machine Learning → Add Model → URL http://localhost:9090 → Save → Sync.
+
+Check it's running:
+```bash
+curl http://localhost:9090
+```
+
 # Configuration
-Parameters can be set in `docker-compose.yml` before running the container.
 
+The `model.py` file contains the main logic for the ML backend.
+Inside `model.py`, you can adjust the following parameters to fit your needs:
+- `CONFIDENCE_FACTOR`: Confidence threshold for predictions. (default: 0.5)
+- `SLICE_HEIGHT`: Height of the image slices. (default: 256)
+- `SLICE_WIDTH`: Width of the image slices. (default: 256)
+- `SLICE_OVERLAP`: Overlap percentage between slices. (default: 0.2)
 
-The following common parameters are available:
-- `BASIC_AUTH_USER` - specify the basic auth user for the model server
-- `BASIC_AUTH_PASS` - specify the basic auth password for the model server
-- `LOG_LEVEL` - set the log level for the model server
-- `WORKERS` - specify the number of workers for the model server
-- `THREADS` - specify the number of threads for the model server
-
-# Customization
-
-The ML backend can be customized by adding your own models and logic inside the `./dir_with_your_model` directory. 
+## Customization
+Built on the Label Studio ML template with a customized `model.py` for YOLO+SAHI. You can further adjust logic or swap the model under `./dir_with_your_model`.
