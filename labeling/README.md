@@ -51,7 +51,7 @@ Then, other users can access the project by going to http://<ip_address>:8080 in
 
 Important: to recreate the Label Studio don't forget to export in JSON format!! (see [backup/](backup))
 
-To train a YOLO model, you need to export as "YOLO format", and pass it through the [process-labeling.py](process-labeling.py) script.
+To train a YOLO model, you need to export as "YOLO format", and pass it through the preprocessing pipeline in [datasets/dataset-preprocessing/](../datasets/dataset-preprocessing).
 
 ## Help tutorial
 
