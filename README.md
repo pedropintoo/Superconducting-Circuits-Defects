@@ -19,7 +19,8 @@ Detecting microscopic fabrication defects on superconducting wafers. We target t
 | SAHI 256px DS + 50% BG | 0.364 | 0.304 | 0.330 | 0.525 | 0.323 | 0.400 | 0.235 | 0.105 | 0.365 | 19.2 | -->
 
 **Visual examples**
-- Defect detection prediction (Critical in red, Dirt-Wire in cyan): ![Prediction example](docs/assets/prediction_example.png)
+- Defect detection prediction (Critical in red, Dirt-Wire in cyan): 2 Criticals and 1 Dirt-Wire were found.
+![Prediction example](docs/assets/prediction_example.png)
 
 ## Quickstart
 1) **Set up env**
