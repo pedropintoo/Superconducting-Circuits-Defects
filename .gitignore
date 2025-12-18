@@ -25,7 +25,7 @@ runs
 !datasets/full_dataset/*.jpg
 !datasets/processed_dataset/**/*.png
 !datasets/train_val_dataset/**/*.jpg
-
+!docs/assets/*.png
 
 # -----------------------------------------------------
 # (template: Python.gitignore)
