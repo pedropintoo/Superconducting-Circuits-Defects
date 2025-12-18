@@ -7,14 +7,16 @@ Detecting microscopic fabrication defects on superconducting wafers. We target t
 
 **Metrics (val split)**
 
-| Configuration | Critical P | Critical R | Critical F1 | Dirt-Wire P | Dirt-Wire R | Dirt-Wire F1 | mAP50 | mAP50:95 | F1_mean | Time (min) |
+![Results](docs/assets/results.png)
+
+<!-- | Configuration | Critical P | Critical R | Critical F1 | Dirt-Wire P | Dirt-Wire R | Dirt-Wire F1 | mAP50 | mAP50:95 | F1_mean | Time (min) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | Baseline (Full Image) | 0.302 | 0.174 | 0.221 | 0.000 | 0.000 | 0.000 | 0.000 | 0.024 | 0.110 | 34.4 |
 | Baseline + Augmentations | 0.403 | 0.203 | 0.273 | 0.000 | 0.000 | 0.000 | 0.013 | 0.038 | 0.137 | 24.5 |
 | Baseline + P2 Head | 0.410 | 0.130 | 0.198 | 0.365 | 0.041 | 0.074 | 0.087 | 0.017 | 0.136 | 40.7 |
 | SAHI 128px + 50% BG | 0.243 | 0.391 | 0.300 | 0.284 | 0.489 | 0.360 | 0.243 | 0.101 | 0.330 | 43.9 |
 | SAHI 256px + 50% BG (best) | 0.193 | 0.503 | 0.435 | 0.674 | 0.560 | 0.612 | 0.368 | 0.152 | 0.497 | 155.1 |
-| SAHI 256px DS + 50% BG | 0.364 | 0.304 | 0.330 | 0.525 | 0.323 | 0.400 | 0.235 | 0.105 | 0.365 | 19.2 |
+| SAHI 256px DS + 50% BG | 0.364 | 0.304 | 0.330 | 0.525 | 0.323 | 0.400 | 0.235 | 0.105 | 0.365 | 19.2 | -->
 
 **Visual examples**
 - Defect detection prediction (Critical in red, Dirt-Wire in cyan): ![Prediction example](docs/assets/prediction_example.png)
