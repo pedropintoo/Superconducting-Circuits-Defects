@@ -63,11 +63,28 @@ def resolve_local_path(url: str) -> str:
 
 # ---------------------------------------------------------------------------
 # Label Studio ML Backend
+# Allow overrides via environment variables for quick tuning.
 # ---------------------------------------------------------------------------
-CONFIDENCE_FACTOR = 0.1
-SLICE_HEIGHT = 256
-SLICE_WIDTH = 256
-SLICE_OVERLAP = 0.2
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+CONFIDENCE_FACTOR = _env_float("CONFIDENCE_FACTOR", 0.5)
+SLICE_HEIGHT = _env_int("SLICE_HEIGHT", 256)
+SLICE_WIDTH = _env_int("SLICE_WIDTH", 256)
+SLICE_OVERLAP = _env_float("SLICE_OVERLAP", 0.2)
+
+
 class NewModel(LabelStudioMLBase):
     """YOLO-based ML Backend for chip defect detection."""
 
@@ -80,7 +97,10 @@ class NewModel(LabelStudioMLBase):
             confidence_threshold=CONFIDENCE_FACTOR,
         )
         self.set("model_version", model_path.parent.parent.name)  # e.g. "run5"
-        logger.warning(f"[ML Backend] Loaded model from {model_path}")
+        logger.warning(
+            f"[ML Backend] Loaded model from {model_path} | conf={CONFIDENCE_FACTOR} "
+            f"slice=({SLICE_HEIGHT}x{SLICE_WIDTH}) overlap={SLICE_OVERLAP}"
+        )
 
     def predict(self, tasks: List[Dict], context: Optional[Dict] = None, **kwargs) -> ModelResponse:
         """

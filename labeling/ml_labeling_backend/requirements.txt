@@ -7,6 +7,7 @@ label-studio-sdk @ git+https://github.com/HumanSignal/label-studio-sdk.git
 sahi
 gunicorn==22.0.0
 label-studio-ml @ git+https://github.com/HumanSignal/label-studio-ml-backend.git
+albumentations
 ultralytics
 opencv-python
 rq

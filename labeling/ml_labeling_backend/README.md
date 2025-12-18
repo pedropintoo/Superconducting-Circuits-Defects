@@ -39,6 +39,7 @@ pip install -r requirements.txt
 Then you can start the ML backend:
 
 ```bash
+CONFIDENCE_FACTOR=0.5 SLICE_HEIGHT=256 SLICE_WIDTH=256 SLICE_OVERLAP=0.2 \
 label-studio-ml start .
 ```
 
