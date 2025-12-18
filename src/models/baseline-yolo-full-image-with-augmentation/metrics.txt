@@ -1,0 +1,20 @@
+Model: models/baseline-yolo-full-image-with-augmentation/weights/best.pt
+Confidence Threshold: N/A (Standard YOLO validation)
+Evaluation Split: val
+
+=== COCO Metrics ===
+mAP @ 0.50: 0.0121
+mAP @ 0.50:0.95: 0.0014
+
+=== Class-wise Performance ===
+Class: Critical
+Precision: 0.0027
+Recall:    0.1304
+F1-Score:  0.0052
+--------------------
+Class: Dirt-Wire
+Precision: 0.0000
+Recall:    0.0000
+F1-Score:  0.0000
+--------------------
+Mean F1 Score: 0.0026

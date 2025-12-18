@@ -3,9 +3,10 @@ Inference script using SAHI for sliced inference with YOLO models on full images
 
 Usage:
     python eval-sahi.py \
-        --weights models/best_model/weights/best.pt \
+        --weights models/best_model_256/weights/best.pt \
         --split val \
-        --data_root ../datasets/train_val_dataset
+        --data_root ../datasets/train_val_dataset \
+        --slice_height 256 --slice_width 256
 
 Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
 """
@@ -46,6 +47,8 @@ def parse_args():
     parser.add_argument("--data_root", type=str, default="../datasets/train_val_dataset", help="Root path of dataset")
     parser.add_argument("--project", type=str, default="inference_results_sahi", help="Save results to project/name")
     parser.add_argument("--name", type=str, default="exp", help="Save results to project/name")
+    parser.add_argument("--slice_height", type=int, default=SLICE_HEIGHT, help="Slice height for SAHI")
+    parser.add_argument("--slice_width", type=int, default=SLICE_WIDTH, help="Slice width for SAHI")
     return parser.parse_args()
 
 def increment_path(path, exist_ok=False, sep='', mkdir=False):
@@ -194,21 +197,43 @@ class ConfusionMatrix:
         return metrics
 
     def plot(self, save_dir="."):
+        # --- 1. Original: Raw Counts ---
         plot_matrix = self.matrix.T
-        
-        fig, ax = plt.subplots(1, 1, figsize=(10, 8))
         labels_ext = [self.labels.get(i, f"Class {i}") for i in range(self.num_classes)] + ["background"]
         
+        fig, ax = plt.subplots(1, 1, figsize=(10, 8))
         sns.heatmap(plot_matrix, annot=True, cmap="Blues", fmt=".0f", 
                     xticklabels=labels_ext, yticklabels=labels_ext)
         
         plt.xlabel("True")
         plt.ylabel("Predicted")
-        plt.title(f"Confusion Matrix (Conf={CONFIDENCE_THRESHOLD})")
+        plt.title(f"Confusion Matrix (Counts) (Conf={CONFIDENCE_THRESHOLD})")
         
         save_path = os.path.join(save_dir, "confusion_matrix_sahi.png")
         plt.savefig(save_path)
-        print(f"Confusion matrix saved to {save_path}")
+        print(f"Confusion matrix (counts) saved to {save_path}")
+        plt.close()
+
+        # --- 2. New: Normalized (Relative Values) ---
+        # Normalize by Row (True Class counts) to show Recall distribution
+        # We perform safe division to avoid 0/0 NaNs
+        row_sums = self.matrix.sum(axis=1)[:, np.newaxis]
+        norm_matrix = np.divide(self.matrix, row_sums, out=np.zeros_like(self.matrix), where=row_sums!=0)
+        
+        # Transpose for plotting: X=True, Y=Predicted
+        plot_norm_matrix = norm_matrix.T 
+
+        fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+        sns.heatmap(plot_norm_matrix, annot=True, cmap="Blues", fmt=".2f", 
+                    xticklabels=labels_ext, yticklabels=labels_ext)
+        
+        plt.xlabel("True")
+        plt.ylabel("Predicted")
+        plt.title(f"Confusion Matrix (Normalized) (Conf={CONFIDENCE_THRESHOLD})")
+        
+        save_path_norm = os.path.join(save_dir, "confusion_matrix_normalized.png")
+        plt.savefig(save_path_norm)
+        print(f"Confusion matrix (normalized) saved to {save_path_norm}")
         plt.close()
 
 def main():
@@ -235,7 +260,7 @@ def main():
         model_type="ultralytics",
         model_path=args.weights,
         confidence_threshold=CONFIDENCE_THRESHOLD,
-        device="cuda" if torch.cuda.is_available() else "cpu"
+        device="cuda" if torch.cuda.is_available() else "cpu",
     )
 
     # 4. Prepare COCO structures
@@ -291,8 +316,8 @@ def main():
         result = get_sliced_prediction(
             img_path,
             detection_model,
-            slice_height=SLICE_HEIGHT,
-            slice_width=SLICE_WIDTH,
+            slice_height=args.slice_height,
+            slice_width=args.slice_width,
             overlap_height_ratio=OVERLAP_HEIGHT_RATIO,
             overlap_width_ratio=OVERLAP_WIDTH_RATIO,
             verbose=0

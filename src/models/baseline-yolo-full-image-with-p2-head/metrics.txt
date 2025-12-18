@@ -1,0 +1,20 @@
+Model: /home/joao/Documents/EPFL/Year1-25-26/Semester1/MachineLearning/new_run_project_ml_2/ML-project-2/src/models/baseline-yolo-full-image-with-p2-head/weights/best.pt
+Confidence Threshold: N/A (Standard YOLO validation)
+Evaluation Split: val
+
+=== COCO Metrics ===
+mAP @ 0.50: 0.0867
+mAP @ 0.50:0.95: 0.0166
+
+=== Class-wise Performance ===
+Class: Critical
+Precision: 0.4097
+Recall:    0.1304
+F1-Score:  0.1979
+--------------------
+Class: Dirt-Wire
+Precision: 0.3653
+Recall:    0.0412
+F1-Score:  0.0740
+--------------------
+Mean F1 Score: 0.1359

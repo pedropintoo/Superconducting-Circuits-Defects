@@ -4,3 +4,6 @@ demo_data
 inference_results_sahi
 models/*
 !models/best*
+!models/sliced*
+!models/baseline*
+!models/fine-tuning*
