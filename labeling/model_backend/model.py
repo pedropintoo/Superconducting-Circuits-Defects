@@ -1,3 +1,16 @@
+"""\
+Model: YOLO-based ML Backend for Label Studio
+
+Requirements:
+- Install requirements.txt in a python virtual environment.
+
+Usage: 
+    CONFIDENCE_FACTOR=0.5 SLICE_HEIGHT=256 SLICE_WIDTH=256 SLICE_OVERLAP=0.2 \
+    label-studio-ml start .
+
+Authors: Pedro Pinto, João Pinto, Fedor Chikhachev
+"""
+
 import os
 import re
 import uuid
