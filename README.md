@@ -20,7 +20,7 @@ Detecting microscopic fabrication defects on superconducting wafers. We target t
 ## Approach overview
 - Data & labeling: NDA-limited subset released ([datasets/full_dataset](datasets/full_dataset), [datasets/labeling_output](datasets/labeling_output)); labels standardized in Label Studio, exported YOLO, processed via pipeline (split → COCO ↔ YOLO → SAHI slicing → class/background balancing).
 - Model: YOLO11 with optional P2 head; SAHI for small-defect recall; background tiles tuned (10–70%) to mitigate bias toward empty slices.
-- Training: on SAHI-sliced YOLO data (default best weights at [models/best_model/weights/best.pt](models/best_model/weights/best.pt)).
+- Training: on SAHI-sliced YOLO data (default best weights at [src/models/best_model/weights/best.pt](src/models/best_model/weights/best.pt)).
 - Evaluation: standard YOLO val (`eval.py`) plus stitched full-image SAHI eval (`eval-sahi.py`) for deployment-like metrics (mAP, F1, confusion, visuals).
 - Inference: CLI (`inference.py`) and Streamlit web demo (`inference-web.py`) with slicing controls and run selection.
 
