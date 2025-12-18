@@ -20,7 +20,7 @@ settings.update({"tensorboard": True})
 trainings = [
     {
         "name": "run_yolo11n_768",
-        "epochs": 1,
+        "epochs": 100,
         "imgsz": 768,
         "yolo_version": "yolo11n",
         "batch": -1,    # -1 for auto batch size
